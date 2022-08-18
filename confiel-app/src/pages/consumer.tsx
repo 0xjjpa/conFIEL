@@ -1,20 +1,6 @@
-import { useRef, useState } from "react";
-import { Certificate, Credential, PrivateKey } from '@nodecfdi/credentials';
-import {
-  Link as ChakraLink,
-  Text,
-  Code,
-  List,
-  ListIcon,
-  ListItem,
-  Flex,
-  IconButton,
-  Button,
-  Input,
-  InputGroup,
-  InputRightElement,
-} from "@chakra-ui/react";
-import { ArrowUpIcon, CheckCircleIcon, LinkIcon } from "@chakra-ui/icons";
+import { useState } from "react";
+import { Credential } from "@nodecfdi/credentials";
+import { Link as ChakraLink, Text, Code } from "@chakra-ui/react";
 
 import { Hero } from "../components/Hero";
 import { Container } from "../components/Container";
@@ -22,65 +8,13 @@ import { Main } from "../components/Main";
 import { DarkModeSwitch } from "../components/DarkModeSwitch";
 import { CTA } from "../components/CTA";
 import { Footer } from "../components/Footer";
-import { shorten } from "../lib/helpers";
-
+import { FIELSetup } from "../components/FIEL";
+import { titleCase } from "../lib/helpers";
 
 const Index = () => {
-  const [keyFilename, setKeyFilename] = useState("");
-  const [cerFilename, setCerFilename] = useState("");
-  const [privateKey, setPrivateKey] = useState<ArrayBuffer | string>(undefined);
-  const [certificate, setCertificate] = useState<ArrayBuffer | string>(undefined);
-  const [fiel, setFiel] = useState<Credential>(undefined);
+  const [eFirma, setFIEL] = useState<Credential>(undefined);
   const [RFC, setRFC] = useState("");
-  const [legaName, setLegalName] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setLoading] = useState(false);
-  const hiddenFileInputKey = useRef(null);
-  const hiddenFileInputCer = useRef(null);
-
-  const handleChangeKey = (event) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = (event.target as HTMLInputElement).files[0];
-      setKeyFilename(shorten(file.name, 10, 10));
-      const keyReader = new FileReader()
-      keyReader.onload = () => {
-        setPrivateKey(keyReader.result);
-      }
-      keyReader.readAsBinaryString(file)
-    }
-  };
-
-  const handleClickKey = () => {
-    hiddenFileInputKey.current.click();
-  };
-
-  const handleChangeCer = (event) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = (event.target as HTMLInputElement).files[0];
-      setCerFilename(file.name);
-      const certReader = new FileReader()
-      certReader.onload = () => {
-        setCertificate(certReader.result);
-      }
-      certReader.readAsBinaryString(file)
-    }
-  };
-
-  const handleChangePassword = (e) => setPassword(e.target.value)
-
-  const handleClickCer = () => {
-    hiddenFileInputCer.current.click();
-  };
-
-  const handleXRPGeneration = () => {
-    setLoading(true);
-    const fiel = Credential.create(String(certificate), String(privateKey), password);
-    const eFirma = fiel.certificate();
-    setFiel(fiel);
-    setRFC(eFirma.rfc());
-    setLegalName(eFirma.legalName)
-    setTimeout(() => setLoading(false), 3000);
-  }
+  const [legalName, setLegalName] = useState("");
 
   return (
     <Container height="100vh">
@@ -94,68 +28,12 @@ const Index = () => {
           Please upload the respective files (<Code fontSize="xs">.key</Code>,
           <Code fontSize="xs">.cer</Code>) to generate your account.
         </Text>
-        <Flex direction="row" justifyContent="space-between" alignItems="center">
-          <Flex>
-            <Text mr={2}>Upload <Code>.key</Code></Text>
-            <input
-              type="file"
-              ref={hiddenFileInputKey}
-              onChange={handleChangeKey}
-              accept=".key"
-              style={{ display: "none" }}
-            />
-            <IconButton
-              onClick={handleClickKey}
-              size="small"
-              aria-label="file upload "
-              icon={<ArrowUpIcon />}
-            />
-          </Flex>
-          <Text fontSize="xs">{ keyFilename ? keyFilename : 'No private key selected.'}</Text>
-        </Flex>
-        <Flex direction="row" justifyContent="space-between" alignItems="center">
-          <Flex>
-            <Text mr={2}>Upload <Code>.cer</Code></Text>
-            <input
-              type="file"
-              ref={hiddenFileInputCer}
-              onChange={handleChangeCer}
-              accept=".cer"
-              style={{ display: "none" }}
-            />
-            <IconButton
-              onClick={handleClickCer}
-              size="small"
-              aria-label="file upload "
-              icon={<ArrowUpIcon />}
-            />
-          </Flex>
-          <Text fontSize="xs">{ cerFilename ? cerFilename : 'No certificate selected.'}</Text>
-        </Flex>
-        {
-          privateKey && certificate && (
-            <InputGroup size="md">
-          <Input
-            pr="4.5rem"
-            type="password"
-            value={password}
-            onChange={handleChangePassword}
-            placeholder="Enter private key password"
-          />
-          <InputRightElement width="4.5rem">
-            <Button
-              h="1.75rem"
-              disabled={!(password.length > 0)}
-              isLoading={isLoading}
-              size="sm"
-              onClick={handleXRPGeneration}
-            >
-              Enter
-            </Button>
-          </InputRightElement>
-        </InputGroup>
-          )
-        }
+        <FIELSetup
+          setFIEL={setFIEL}
+          setRFC={setRFC}
+          setLegalName={setLegalName}
+        />
+        { RFC && legalName && <Text>Loaded <Code>{titleCase(legalName)}</Code> with RFC <Code>{RFC}</Code></Text> }
       </Main>
 
       <DarkModeSwitch />
