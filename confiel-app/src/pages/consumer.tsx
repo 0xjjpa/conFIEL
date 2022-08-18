@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Credential } from '@nodecfdi/credentials';
+import { Certificate, Credential, PrivateKey } from '@nodecfdi/credentials';
 import {
   Link as ChakraLink,
   Text,
@@ -28,8 +28,11 @@ import { shorten } from "../lib/helpers";
 const Index = () => {
   const [keyFilename, setKeyFilename] = useState("");
   const [cerFilename, setCerFilename] = useState("");
-  const [privateKey, setPrivateKey] = useState<File>(undefined);
-  const [certificate, setCertificate] = useState<File>(undefined);
+  const [privateKey, setPrivateKey] = useState<ArrayBuffer | string>(undefined);
+  const [certificate, setCertificate] = useState<ArrayBuffer | string>(undefined);
+  const [fiel, setFiel] = useState<Credential>(undefined);
+  const [RFC, setRFC] = useState("");
+  const [legaName, setLegalName] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setLoading] = useState(false);
   const hiddenFileInputKey = useRef(null);
@@ -39,7 +42,11 @@ const Index = () => {
     if (event.target.files && event.target.files[0]) {
       const file = (event.target as HTMLInputElement).files[0];
       setKeyFilename(shorten(file.name, 10, 10));
-      setPrivateKey(file);
+      const keyReader = new FileReader()
+      keyReader.onload = () => {
+        setPrivateKey(keyReader.result);
+      }
+      keyReader.readAsBinaryString(file)
     }
   };
 
@@ -51,7 +58,11 @@ const Index = () => {
     if (event.target.files && event.target.files[0]) {
       const file = (event.target as HTMLInputElement).files[0];
       setCerFilename(file.name);
-      setCertificate(file);
+      const certReader = new FileReader()
+      certReader.onload = () => {
+        setCertificate(certReader.result);
+      }
+      certReader.readAsBinaryString(file)
     }
   };
 
@@ -63,15 +74,11 @@ const Index = () => {
 
   const handleXRPGeneration = () => {
     setLoading(true);
-    console.log("Start XRP generation...");
-    //@TODO: Process Certificate on the browser side...
-    const certReader = new FileReader()
-    certReader.onload = (result) => {
-      console.log("RESULT", result);
-    }
-    certReader.readAsBinaryString(certificate)
-    console.log("Certificate", certificate);
-    console.log("Key", privateKey);
+    const fiel = Credential.create(String(certificate), String(privateKey), password);
+    const eFirma = fiel.certificate();
+    setFiel(fiel);
+    setRFC(eFirma.rfc());
+    setLegalName(eFirma.legalName)
     setTimeout(() => setLoading(false), 3000);
   }
 
