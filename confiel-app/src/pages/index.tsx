@@ -34,6 +34,10 @@ const Index = () => (
             <Code><ChakraLink isExternal href="https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm">secp256k1-ECDSA</ChakraLink></Code>{' '}
             seed.
         </ListItem>
+        <ListItem>
+          <ListIcon as={CheckCircleIcon} color="green.500" />
+            Supports <Code>X.509 PEM,DER</Code> certificates and <Code>PKCS#8 PEM,DEM</Code> or <Code>PKCS#5 PEM</Code> private keys.
+        </ListItem>
       </List>
     </Main>
 

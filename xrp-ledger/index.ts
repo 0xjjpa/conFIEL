@@ -46,11 +46,12 @@ async function main() {
   })
   console.log('Bob Balance', bobResponse);
 
-  const DEFAULT_AMOUNT = 1000
+  const DEFAULT_AMOUNT = 10000000
   const prepared = await client.autofill(
     buildTransaction(
       aliceWallet.address,
-      bobWallet.address,
+      // bobWallet.address,
+      'rnjMsuMkqgkjtDsCZmE7TiQ8Di7qx285Cs', // Used for demo purposes
       `${DEFAULT_AMOUNT}`
       )
   )
