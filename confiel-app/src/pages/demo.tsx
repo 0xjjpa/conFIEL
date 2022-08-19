@@ -14,6 +14,8 @@ import { titleCase } from "../lib/helpers";
 import { Client, dropsToXrp, Wallet } from "xrpl";
 import { btoe } from "rfc1751.js";
 import { NavBar } from "../components/NavBar";
+import { UserActions } from "../components/UserActions";
+import { UserSignUp } from "../components/User/UserSignUp";
 
 const Index = () => {
   const [xrpClient, setXRPClient] = useState<Client>(undefined);
@@ -59,21 +61,20 @@ const Index = () => {
       <Hero />
       <Main>
         <NavBar />
-        <Text color="text" mt="10">
-          The Consumer workflow starts by uploading a FIEL e.firma which
-          generates a <Code>XRP</Code> account.
-        </Text>
-        <Text fontSize="xs">
-          Please upload the respective files (<Code fontSize="xs">.key</Code>,
-          <Code fontSize="xs">.cer</Code>) to generate your account.
-        </Text>
-        <FIELSetup
-          setFIEL={setFIEL}
-          setRFC={setRFC}
-          setLegalName={setLegalName}
+        <UserActions
+          FIEL={FIEL}
+          balance={balance}
+          wallet={wallet}
+          SignUp={
+            <UserSignUp
+              RFC={RFC}
+              legalName={legalName}
+              setFIEL={setFIEL}
+              setRFC={setRFC}
+              setLegalName={setLegalName}
+            />
+          }
         />
-        { RFC && legalName && <Text>Loaded <Code>{titleCase(legalName)}</Code> with RFC <Code>{RFC}</Code></Text> }
-        { wallet && balance && <Text>Loaded wallet <Code>{wallet.address}</Code> with balance <Code>{balance}</Code> XRP</Text>}
       </Main>
 
       <DarkModeSwitch />
