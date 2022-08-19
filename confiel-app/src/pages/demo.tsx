@@ -13,6 +13,7 @@ import { FIELSetup } from "../components/FIEL";
 import { titleCase } from "../lib/helpers";
 import { Client, dropsToXrp, Wallet } from "xrpl";
 import { btoe } from "rfc1751.js";
+import { NavBar } from "../components/NavBar";
 
 const Index = () => {
   const [xrpClient, setXRPClient] = useState<Client>(undefined);
@@ -57,6 +58,7 @@ const Index = () => {
     <Container height="100vh">
       <Hero />
       <Main>
+        <NavBar />
         <Text color="text" mt="10">
           The Consumer workflow starts by uploading a FIEL e.firma which
           generates a <Code>XRP</Code> account.
