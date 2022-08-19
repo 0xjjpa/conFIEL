@@ -7,9 +7,19 @@ import {
   HStack,
   useColorModeValue,
 } from "@chakra-ui/react";
-import * as React from "react";
+import { useEffect } from "react";
+import { CONFIEL_ROLES, DEFAULT_ROLE } from "../constants/roles";
 
-export const NavBar = () => {
+export const NavBar = ({
+  currentRole,
+  setCurrentRole,
+}: {
+  currentRole: CONFIEL_ROLES;
+  setCurrentRole: (role: CONFIEL_ROLES) => void;
+}) => {
+  useEffect(() => {
+    setCurrentRole(DEFAULT_ROLE)
+  }, [])
   return (
     <Box as="section">
       <Box
@@ -20,9 +30,20 @@ export const NavBar = () => {
         <Container py={{ base: "4", lg: "5" }}>
           <HStack spacing="10" justify="space-between">
             <Flex justify="center" flex="1">
-              <ButtonGroup variant="link" spacing="8">
-                {["User", "Bank"].map((item) => (
-                  <Button key={item}>{item}</Button>
+              <ButtonGroup variant="link" spacing="8" mt="2">
+                {Object.keys(CONFIEL_ROLES).map((item) => (
+                  <Button
+                    style={
+                      CONFIEL_ROLES[item] == currentRole
+                        ? { textDecoration: "underline" }
+                        : {}
+                    }
+                    key={item}
+                    size="sm"
+                    onClick={() => setCurrentRole(CONFIEL_ROLES[item])}
+                  >
+                    {CONFIEL_ROLES[item]}
+                  </Button>
                 ))}
               </ButtonGroup>
             </Flex>
