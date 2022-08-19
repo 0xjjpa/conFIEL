@@ -22,7 +22,7 @@ export const UserSignUp = ({
     </Text>
     <Text fontSize="xs">
       Please upload the respective files (<Code fontSize="xs">.key</Code>,
-      <Code fontSize="xs">.cer</Code>) to generate your account.
+      <Code fontSize="xs">.cer</Code>) to access your account.
     </Text>
     <FIELSetup setFIEL={setFIEL} setRFC={setRFC} setLegalName={setLegalName} />
     {RFC && legalName && (

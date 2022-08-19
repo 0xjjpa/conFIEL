@@ -14,7 +14,7 @@ import { titleCase } from "../lib/helpers";
 import { Client, dropsToXrp, Wallet } from "xrpl";
 import { btoe } from "rfc1751.js";
 import { NavBar } from "../components/NavBar";
-import { UserActions } from "../components/UserActions";
+import { UserActions } from "../components/User/UserActions";
 import { UserSignUp } from "../components/User/UserSignUp";
 
 const Index = () => {
@@ -45,13 +45,17 @@ const Index = () => {
       const FIELwallet = Wallet.fromMnemonic(rfc1751, { mnemonicEncoding: "rfc1751"});
       setWallet(FIELwallet);
       
-      const walletResponse = await xrpClient.request({
+      xrpClient.request({
         "command": "account_info",
         "account": FIELwallet.address,
         "ledger_index": "validated"
+      }).then(walletResponse => {
+        const balance = dropsToXrp(walletResponse.result.account_data.Balance)
+        setBalance(balance);
+      }).catch(err => {
+        console.error(err);
+        setBalance("0.00");
       })
-      const balance = dropsToXrp(walletResponse.result.account_data.Balance)
-      setBalance(balance);
     }
     FIEL && createXRPWallet();
   }, [FIEL, xrpClient])
