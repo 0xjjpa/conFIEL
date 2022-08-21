@@ -70,6 +70,11 @@ const Index = () => {
   }, [FIEL, xrpClient]);
 
   const userRole = (
+    <>
+    <Text>A user is any Mexican citizen that has registered to the SAT (Mexico’s Tax Revenue Service)
+      and has been provided an e.Firma or FIEL, upon being KYC’ed by the Federal Authority. The FIEL
+      contains a unique id known as RFC, and its public certificate has the user’s data.
+    </Text>
     <UserActions
       FIEL={FIEL}
       balance={balance}
@@ -84,12 +89,13 @@ const Index = () => {
         />
       }
     />
+    </>
   );
 
   return (
     <Container height="100vh">
       <Hero />
-      <Main>
+      <Main pb="20">
         <NavBar currentRole={currentRole} setCurrentRole={setCurrentRole} />
         {
           currentRole == CONFIEL_ROLES.USER && userRole
@@ -97,19 +103,6 @@ const Index = () => {
       </Main>
 
       <DarkModeSwitch />
-      <Footer>
-        <Text>
-          By{" "}
-          <ChakraLink isExternal href="https://twitter.com/0xjjpa">
-            Jose Aguinaga
-          </ChakraLink>
-          , a submission to the{" "}
-          <ChakraLink isExternal href="https://ripplecbdc.devpost.com/">
-            Ripple CBDC Innovate
-          </ChakraLink>{" "}
-          hackathon
-        </Text>
-      </Footer>
       <CTA />
     </Container>
   );

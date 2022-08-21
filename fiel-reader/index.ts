@@ -3,6 +3,8 @@ import { Credential } from '@nodecfdi/credentials';
 // se puede mandar el path o el contenido
 const certFile = fs.readFileSync('fiel/certificado.cer', 'binary');
 const keyFile = fs.readFileSync('fiel/privatekey.key', 'binary');
+console.log("CERT", certFile);
+console.log("KEY", keyFile);
 const passPhrase = '12345678a'; // contraseña para abrir la llave privada
 const fiel = Credential.create(certFile, keyFile, passPhrase);
 const sourceString = 'texto a firmar';
