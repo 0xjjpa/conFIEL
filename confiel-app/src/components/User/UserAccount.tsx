@@ -10,11 +10,9 @@ import { Account, BankStorage } from "../../types/BankStorage";
 
 export const UserAccount = ({
   wallet,
-  balance,
   name,
 }: {
   wallet: Wallet;
-  balance: string;
   name: string;
 }) => {
   const [bank, setBank] = useLocalStorage("bank", {
@@ -65,7 +63,7 @@ export const UserAccount = ({
     <>
       <Text>
         Loaded wallet <Code>{wallet.address}</Code> with balance{" "}
-        <Code>{balance}</Code> XRP
+        <Code>0.00 (TBD)</Code> XRP
       </Text>
       {account?.status === ONBOARDING_FLOW.open_account && (
         <Button mt="2" onClick={moveNextStage}>

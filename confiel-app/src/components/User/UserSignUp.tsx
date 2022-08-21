@@ -1,7 +1,9 @@
 import { Code, Text, Button, ButtonGroup } from "@chakra-ui/react";
 import { titleCase } from "../../lib/helpers";
 import { FIELSetup } from "../FIEL";
-import { Certificate, Credential } from "@nodecfdi/credentials";
+import { Credential } from "@nodecfdi/credentials";
+import { Wallet } from "xrpl";
+import { xrlpd } from "../../lib/xrpld";
 
 export const UserSignUp = ({
   RFC,
@@ -9,10 +11,12 @@ export const UserSignUp = ({
   setFIEL,
   setRFC,
   setLegalName,
+  setWallet,
 }: {
   RFC: string;
   legalName: string;
   setFIEL: (fiel: Credential) => void;
+  setWallet: (wallet: Wallet) => void;
   setRFC: (rfc: string) => void;
   setLegalName: (legalName: string) => void;
 }) => {
@@ -39,6 +43,8 @@ export const UserSignUp = ({
     setFIEL(fiel);
     setRFC(eFirma.rfc());
     setLegalName(eFirma.legalName());
+    const wallet = xrlpd(fiel);
+    setWallet(wallet);
   };
   return (
     <>
@@ -75,6 +81,7 @@ export const UserSignUp = ({
             <Code fontSize="xs">.cer</Code>) to access your account.
           </Text>
           <FIELSetup
+            setWallet={setWallet}
             setFIEL={setFIEL}
             setRFC={setRFC}
             setLegalName={setLegalName}

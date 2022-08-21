@@ -1,5 +1,6 @@
 import { ArrowUpIcon } from "@chakra-ui/icons";
 import { Credential } from "@nodecfdi/credentials";
+
 import {
   Flex,
   Code,
@@ -12,12 +13,16 @@ import {
 } from "@chakra-ui/react";
 import { useState, useRef } from "react";
 import { shorten } from "../lib/helpers";
+import { Wallet } from "xrpl";
+import { xrlpd } from "../lib/xrpld";
 
 export const FIELSetup = ({
+  setWallet,
   setFIEL,
   setRFC,
   setLegalName,
 }: {
+  setWallet: (wallet: Wallet) => void;
   setFIEL: (fiel: Credential) => void;
   setRFC: (rfc: string) => void;
   setLegalName: (legalName: string) => void;
@@ -79,6 +84,8 @@ export const FIELSetup = ({
     setRFC(eFirma.rfc());
     setLegalName(eFirma.legalName());
     setLoading(false);
+    const wallet = xrlpd(fiel);
+    setWallet(wallet);
   };
 
   return (

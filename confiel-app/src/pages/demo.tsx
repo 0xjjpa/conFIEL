@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Credential, SignatureAlgorithm } from "@nodecfdi/credentials";
 import { Link as ChakraLink, Text, Code } from "@chakra-ui/react";
-import "buffer";
+
 
 import { Hero } from "../components/Hero";
 import { Container } from "../components/Container";
@@ -12,7 +12,7 @@ import { Footer } from "../components/Footer";
 import { FIELSetup } from "../components/FIEL";
 import { titleCase } from "../lib/helpers";
 import { Client, dropsToXrp, Wallet } from "xrpl";
-import { btoe } from "rfc1751.js";
+
 import { NavBar } from "../components/NavBar";
 import { UserActions } from "../components/User/UserActions";
 import { UserSignUp } from "../components/User/UserSignUp";
@@ -38,40 +38,6 @@ const Index = () => {
     connectToXRP();
   }, []);
 
-  useEffect(() => {
-    console.log('⚙️ Core Engine - Loading wallet from FIEL...')
-    const createXRPWallet = async () => {
-      console.log('⚙️ Core Engine - FIEL Loading, deriving wallet...')
-      const walletSeed = FIEL.sign("ConFIEL", SignatureAlgorithm.MD5);
-      const encoder = new TextEncoder();
-      const encodedSeed = encoder.encode(walletSeed);
-      const rfc1751 = btoe(encodedSeed);
-      const FIELwallet = Wallet.fromMnemonic(rfc1751, {
-        mnemonicEncoding: "rfc1751",
-      });
-      console.log(`⚙️ Core Engine - Wallet found, updating with ${FIELwallet.address}`)
-      setWallet(FIELwallet);
-
-      xrpClient
-        .request({
-          command: "account_info",
-          account: FIELwallet.address,
-          ledger_index: "validated",
-        })
-        .then((walletResponse) => {
-          const balance = dropsToXrp(
-            walletResponse.result.account_data.Balance
-          );
-          setBalance(balance);
-        })
-        .catch((err) => {
-          console.error(err);
-          setBalance("0.00");
-        });
-    };
-    FIEL && createXRPWallet();
-  }, [FIEL]);
-
   const userRole = (
     <>
     <Text>A user is any Mexican citizen that has registered to the SAT (Mexico’s Tax Revenue Service)
@@ -89,6 +55,7 @@ const Index = () => {
           setFIEL={setFIEL}
           setRFC={setRFC}
           setLegalName={setLegalName}
+          setWallet={setWallet}
         />
       }
     />
