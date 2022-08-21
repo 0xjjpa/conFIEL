@@ -39,7 +39,9 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
+    console.log('⚙️ Core Engine - Loading wallet from FIEL...')
     const createXRPWallet = async () => {
+      console.log('⚙️ Core Engine - FIEL Loading, deriving wallet...')
       const walletSeed = FIEL.sign("ConFIEL", SignatureAlgorithm.MD5);
       const encoder = new TextEncoder();
       const encodedSeed = encoder.encode(walletSeed);
@@ -47,6 +49,7 @@ const Index = () => {
       const FIELwallet = Wallet.fromMnemonic(rfc1751, {
         mnemonicEncoding: "rfc1751",
       });
+      console.log(`⚙️ Core Engine - Wallet found, updating with ${FIELwallet.address}`)
       setWallet(FIELwallet);
 
       xrpClient
@@ -67,7 +70,7 @@ const Index = () => {
         });
     };
     FIEL && createXRPWallet();
-  }, [FIEL, xrpClient]);
+  }, []);
 
   const userRole = (
     <>

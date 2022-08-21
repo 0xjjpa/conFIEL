@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { Credential } from "@nodecfdi/credentials";
 import { Wallet } from "xrpl";
+import { UserAccount } from "./UserAccount";
 
 export const UserActions = ({
   FIEL,
@@ -32,12 +33,7 @@ export const UserActions = ({
       <TabPanels>
         <TabPanel>{SignUp}</TabPanel>
         <TabPanel>
-          {wallet && balance && (
-            <Text>
-              Loaded wallet <Code>{wallet.address}</Code> with balance{" "}
-              <Code>{balance}</Code> XRP
-            </Text>
-          )}
+          {wallet && balance && FIEL && <UserAccount wallet={wallet} balance={balance} name={FIEL?.legalName()} />}
         </TabPanel>
       </TabPanels>
     </Tabs>
