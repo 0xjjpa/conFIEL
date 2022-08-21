@@ -70,7 +70,7 @@ const Index = () => {
         });
     };
     FIEL && createXRPWallet();
-  }, []);
+  }, [FIEL]);
 
   const userRole = (
     <>

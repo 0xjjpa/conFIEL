@@ -1,6 +1,5 @@
 export enum CONFIEL_ROLES {
   "USER" = "User",
-  "COMPANY" = "Company",
   "BANK" = "Bank",
   "SAT" = "SAT"
 }
