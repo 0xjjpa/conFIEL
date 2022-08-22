@@ -1,9 +1,11 @@
 import { btoe } from "rfc1751.js";
 import { SignatureAlgorithm, Credential } from "@nodecfdi/credentials";
-import { Wallet } from "xrpl";
+import { Client, dropsToXrp, Wallet } from "xrpl";
 import "buffer";
+import { BalanceResponse } from "../types/BankStorage";
+import { ONBOARDING_DEFAULT_BALANCE } from "../constants/onboarding";
 
-export const xrlpd = (FIEL: Credential) => {
+export const xrpld = (FIEL: Credential) => {
   console.log('⚙️ XRP Derivation Engine - FIEL Loading, deriving wallet...')
   const walletSeed = FIEL.sign("ConFIEL", SignatureAlgorithm.MD5);
   const encoder = new TextEncoder();
@@ -14,21 +16,27 @@ export const xrlpd = (FIEL: Credential) => {
   });
   console.log(`⚙️ XRP Derivation Engine - Wallet found, updating with ${wallet.address}`)
   return wallet;
-
-  // xrpClient
-  //   .request({
-  //     command: "account_info",
-  //     account: FIELwallet.address,
-  //     ledger_index: "validated",
-  //   })
-  //   .then((walletResponse) => {
-  //     const balance = dropsToXrp(
-  //       walletResponse.result.account_data.Balance
-  //     );
-  //     setBalance(balance);
-  //   })
-  //   .catch((err) => {
-  //     console.error(err);
-  //     setBalance("0.00");
-  //   });
 };
+
+export const xrpldGetBalance = async (xrpClient: Client, address: string): Promise<BalanceResponse> => {
+  return xrpClient
+    .request({
+      command: "account_info",
+      account: address,
+      ledger_index: "validated",
+    })
+    .then((walletResponse) => {
+      const balance = dropsToXrp(
+        walletResponse.result.account_data.Balance
+      );
+      return ({ status: 'ok', balance } as BalanceResponse);
+    })
+    .catch((err) => {
+      console.error(err);
+      return ({
+        status: 'err',
+        balance: ONBOARDING_DEFAULT_BALANCE
+      } as BalanceResponse);
+    });
+}
+

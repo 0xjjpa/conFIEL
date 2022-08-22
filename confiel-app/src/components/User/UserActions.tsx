@@ -1,19 +1,15 @@
-import {
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
-} from "@chakra-ui/react";
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from "@chakra-ui/react";
 import { Credential } from "@nodecfdi/credentials";
-import { Wallet } from "xrpl";
+import { Client, Wallet } from "xrpl";
 import { UserAccount } from "./UserAccount";
 
 export const UserActions = ({
+  xrplClient,
   FIEL,
   wallet,
   SignUp = <></>,
 }: {
+  xrplClient: Client;
   FIEL?: Credential;
   wallet: Wallet;
   SignUp: JSX.Element;
@@ -28,7 +24,13 @@ export const UserActions = ({
       <TabPanels>
         <TabPanel>{SignUp}</TabPanel>
         <TabPanel>
-          {wallet && FIEL && <UserAccount wallet={wallet} name={FIEL?.legalName()} />}
+          {wallet && FIEL && (
+            <UserAccount
+              xrplClient={xrplClient}
+              wallet={wallet}
+              name={FIEL?.legalName()}
+            />
+          )}
         </TabPanel>
       </TabPanels>
     </Tabs>

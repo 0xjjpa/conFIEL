@@ -17,10 +17,11 @@ import { NavBar } from "../components/NavBar";
 import { UserActions } from "../components/User/UserActions";
 import { UserSignUp } from "../components/User/UserSignUp";
 import { CONFIEL_ROLES } from "../constants/roles";
+import { BankView } from "../components/Bank/BankView";
 
 const Index = () => {
   const [currentRole, setCurrentRole] = useState(undefined);
-  const [xrpClient, setXRPClient] = useState<Client>(undefined);
+  const [xrplClient, setXRPLClient] = useState<Client>(undefined);
   const [FIEL, setFIEL] = useState<Credential>(undefined);
   const [wallet, setWallet] = useState<Wallet>(undefined);
   const [balance, setBalance] = useState("");
@@ -33,10 +34,22 @@ const Index = () => {
     const connectToXRP = async () => {
       const client = new Client(RIPPLE_TESTNET_ENDPOINT);
       await client.connect();
-      setXRPClient(client);
+      setXRPLClient(client);
     };
     connectToXRP();
   }, []);
+
+  const bankRole = (
+    <>
+    <Text>
+      A bank is a regulated centralized entity able to issue digital currencies such as
+      stablecoins to provide users with online payment capabilities. Although payments can
+      be done peer-to-peer (P2P), a bank is always able to freeze and control transfers
+      if needed to be comply with local authorities.
+    </Text>
+    <BankView />
+    </>
+  )
 
   const userRole = (
     <>
@@ -45,8 +58,8 @@ const Index = () => {
       contains a unique id known as RFC, and its public certificate has the user’s data.
     </Text>
     <UserActions
+      xrplClient={xrplClient}
       FIEL={FIEL}
-      balance={balance}
       wallet={wallet}
       SignUp={
         <UserSignUp
@@ -69,6 +82,9 @@ const Index = () => {
         <NavBar currentRole={currentRole} setCurrentRole={setCurrentRole} />
         {
           currentRole == CONFIEL_ROLES.USER && userRole
+        }
+        {
+          currentRole == CONFIEL_ROLES.BANK && bankRole
         }
       </Main>
 

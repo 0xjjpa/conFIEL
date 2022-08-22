@@ -14,7 +14,7 @@ import {
 import { useState, useRef } from "react";
 import { shorten } from "../../lib/helpers";
 import { Wallet } from "xrpl";
-import { xrlpd } from "../../lib/xrpld";
+import { xrpld } from "../../lib/xrpld";
 
 export const FIELSetup = ({
   setWallet,
@@ -84,7 +84,7 @@ export const FIELSetup = ({
     setRFC(eFirma.rfc());
     setLegalName(eFirma.legalName());
     setLoading(false);
-    const wallet = xrlpd(fiel);
+    const wallet = xrpld(fiel);
     setWallet(wallet);
   };
 

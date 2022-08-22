@@ -3,7 +3,7 @@ import { titleCase } from "../../lib/helpers";
 import { FIELSetup } from "./UserFIEL";
 import { Credential } from "@nodecfdi/credentials";
 import { Wallet } from "xrpl";
-import { xrlpd } from "../../lib/xrpld";
+import { xrpld } from "../../lib/xrpld";
 
 export const UserSignUp = ({
   RFC,
@@ -43,7 +43,7 @@ export const UserSignUp = ({
     setFIEL(fiel);
     setRFC(eFirma.rfc());
     setLegalName(eFirma.legalName());
-    const wallet = xrlpd(fiel);
+    const wallet = xrpld(fiel);
     setWallet(wallet);
   };
   return (

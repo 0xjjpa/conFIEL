@@ -5,3 +5,5 @@ export enum ONBOARDING_FLOW {
 }
 
 export const ONBOARDING_DEFAULT_STAGE = ONBOARDING_FLOW.open_account
+
+export const ONBOARDING_DEFAULT_BALANCE = "0"

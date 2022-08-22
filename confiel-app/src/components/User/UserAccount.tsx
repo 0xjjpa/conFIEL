@@ -1,28 +1,54 @@
-import { Code, Text, Button } from "@chakra-ui/react";
+import { Code, Text, Button, Flex } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { Wallet } from "xrpl";
+import { Client, Wallet } from "xrpl";
 import {
+  ONBOARDING_DEFAULT_BALANCE,
   ONBOARDING_DEFAULT_STAGE,
   ONBOARDING_FLOW,
 } from "../../constants/onboarding";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { xrpldGetBalance } from "../../lib/xrpld";
 import { Account, BankStorage } from "../../types/BankStorage";
 
 export const UserAccount = ({
+  xrplClient,
   wallet,
   name,
 }: {
+  xrplClient: Client;
   wallet: Wallet;
   name: string;
 }) => {
+  const newAccount: Account = {
+    status: ONBOARDING_DEFAULT_STAGE,
+    address: wallet.address,
+    name,
+  };
   const [bank, setBank] = useLocalStorage("bank", {
-    [wallet.address]: {
-      status: ONBOARDING_DEFAULT_STAGE,
-      address: wallet.address,
-      name,
-    },
+    [wallet.address]: newAccount,
   });
   const [account, setAccount] = useState<Account>();
+  const [balance, setBalance] = useState<string>("");
+
+  useEffect(() => {
+    const loadBalance = async () => {
+      console.log(
+        `🏦 Bank Module - Retrieving balance from address ${account.address}...`
+      );
+      const balanceResponse = await xrpldGetBalance(
+        xrplClient,
+        account.address
+      );
+      if (balanceResponse.status == "err") {
+        console.log(`🏦 Bank Module - Account has yet to be funded.`);
+        setBalance(balanceResponse.balance);
+      } else {
+        console.log(`🏦 Bank Module - Account has been funded.`);
+        setBalance(balanceResponse.balance);
+      }
+    };
+    account && loadBalance();
+  }, [account]);
 
   useEffect(() => {
     console.log(
@@ -34,11 +60,7 @@ export const UserAccount = ({
         `🏦 No Account Found - Creating one for ${name}:`,
         wallet.address
       );
-      const newAccount = {
-        status: ONBOARDING_DEFAULT_STAGE,
-        address: wallet.address,
-        name,
-      };
+
       setBank(Object.assign({}, bank, { [wallet.address]: newAccount }));
       setAccount(newAccount);
     } else {
@@ -61,10 +83,17 @@ export const UserAccount = ({
   };
   return (
     <>
-      <Text>
-        Loaded wallet <Code>{wallet.address}</Code> with balance{" "}
-        <Code>0.00 (TBD)</Code> XRP
-      </Text>
+      <Flex direction="column">
+        <Text>
+          Status <Code>{balance == ONBOARDING_DEFAULT_BALANCE ? 'Inactive' : 'Active'}</Code>
+        </Text>
+        <Text>
+          Wallet <Code>{wallet.address}</Code>
+        </Text>
+        <Text>
+          Balance <Code>{Number(balance).toFixed(2)}</Code> XRP
+        </Text>
+      </Flex>
       {account?.status === ONBOARDING_FLOW.open_account && (
         <Button mt="2" onClick={moveNextStage}>
           Open Account
