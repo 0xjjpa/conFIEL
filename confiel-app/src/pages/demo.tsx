@@ -9,7 +9,7 @@ import { Main } from "../components/Main";
 import { DarkModeSwitch } from "../components/DarkModeSwitch";
 import { CTA } from "../components/CTA";
 import { Footer } from "../components/Footer";
-import { FIELSetup } from "../components/FIEL";
+import { FIELSetup } from "../components/User/UserFIEL";
 import { titleCase } from "../lib/helpers";
 import { Client, dropsToXrp, Wallet } from "xrpl";
 

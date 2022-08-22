@@ -1,6 +1,6 @@
 import { Code, Text, Button, ButtonGroup } from "@chakra-ui/react";
 import { titleCase } from "../../lib/helpers";
-import { FIELSetup } from "../FIEL";
+import { FIELSetup } from "./UserFIEL";
 import { Credential } from "@nodecfdi/credentials";
 import { Wallet } from "xrpl";
 import { xrlpd } from "../../lib/xrpld";

@@ -12,9 +12,9 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useState, useRef } from "react";
-import { shorten } from "../lib/helpers";
+import { shorten } from "../../lib/helpers";
 import { Wallet } from "xrpl";
-import { xrlpd } from "../lib/xrpld";
+import { xrlpd } from "../../lib/xrpld";
 
 export const FIELSetup = ({
   setWallet,
