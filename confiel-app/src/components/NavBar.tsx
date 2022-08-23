@@ -21,7 +21,7 @@ export const NavBar = ({
     setCurrentRole(DEFAULT_ROLE)
   }, [])
   return (
-    <Box as="section">
+    <Box as="section" style={{ zIndex: 20 }}>
       <Box
         as="nav"
         bg="bg-surface"
