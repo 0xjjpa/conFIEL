@@ -18,12 +18,13 @@ import { ONBOARDING_FLOW } from "../../constants/onboarding";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { titleCase, truncate } from "../../lib/helpers";
 import { BankResponse } from "../../types/BankResponse";
-import { Account } from "../../types/BankStorage";
+import { Account, BankStorage } from "../../types/BankStorage";
 
 export const BankView = () => {
   const tableCaption = "Existing registered users and actions.";
   const [bankAddress, setBankAddress] = useState<string>("");
-  const [bank] = useLocalStorage("bank", undefined);
+  const [bank, setBank] = useLocalStorage("bank", undefined);
+  const [accounts, setAccounts] = useState([]);
 
   useEffect(() => {
     const loadBankData = async () => {
@@ -36,18 +37,29 @@ export const BankView = () => {
   }, []);
 
   const fundAccount = async (address: string) => {
-    const response = await fetch("/api/bank/fund", {
-      method: "POST",
-      body: JSON.stringify({ address }),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-    })
-    console.log('Response', response)
+    const response: BankResponse = await (
+      await fetch("/api/bank/fund", {
+        method: "POST",
+        body: JSON.stringify({ address }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+    ).json();
+    const { status } = response;
+    if (status == "ok") {
+      const account: Account = (bank as BankStorage)[address];
+      const updatedAccount = { ...account, status: account.status + 1 };
+      setBank(Object.assign({}, bank, { [address]: updatedAccount }));
+    }
   };
 
-  const accounts = bank ? Object.keys(bank) : [];
+  useEffect(() => {
+    const accounts = bank ? Object.keys(bank) : [];
+    setAccounts(accounts);
+  }, [bank])
+  
   return (
     <>
       <Text fontWeight={900}>
