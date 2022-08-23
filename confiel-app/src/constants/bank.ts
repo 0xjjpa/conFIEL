@@ -1,0 +1,1 @@
+export const DEFAULT_FUNDING_AMOUNT = 10000000

@@ -1,0 +1,1 @@
+export const DEFAULT_XRPL_API_URL = "wss://s.altnet.rippletest.net:51233"

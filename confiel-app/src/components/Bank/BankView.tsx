@@ -22,68 +22,92 @@ import { Account } from "../../types/BankStorage";
 
 export const BankView = () => {
   const tableCaption = "Existing registered users and actions.";
-  const [bankAddress, setBankAddress] = useState<string>("")
+  const [bankAddress, setBankAddress] = useState<string>("");
   const [bank] = useLocalStorage("bank", undefined);
 
   useEffect(() => {
-    const loadBankData = async() => {
-      const addressResponse: BankResponse = await (await fetch('/api/bank/address')).json()
-      setBankAddress(addressResponse?.address)
-    }
-    loadBankData()
-  }, [])
+    const loadBankData = async () => {
+      const addressResponse: BankResponse = await (
+        await fetch("/api/bank/address")
+      ).json();
+      setBankAddress(addressResponse?.address);
+    };
+    loadBankData();
+  }, []);
+
+  const fundAccount = async (address: string) => {
+    const response = await fetch("/api/bank/fund", {
+      method: "POST",
+      body: JSON.stringify({ address }),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    })
+    console.log('Response', response)
+  };
 
   const accounts = bank ? Object.keys(bank) : [];
   return (
     <>
-    <Text fontWeight={900}>Bank Account - 
-      <ChakraLink isExternal href={`https://testnet.xrpl.org/accounts/${bankAddress}`}>
-      <Code>{bankAddress}</Code>
-      </ChakraLink>
-    </Text>
-    <TableContainer>
-      <Table variant="simple">
-        <TableCaption>{tableCaption}</TableCaption>
-        <Thead>
-          <Tr>
-            <Th>Name</Th>
-            <Th>Account</Th>
-            <Th isNumeric>Balance</Th>
-            <Th>Actions</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {accounts.length > 0 ? (
-            accounts.map((accountKey) => {
-              const account: Account = bank[accountKey];
-              return (
-                <Tr>
-                  <Td>{titleCase(account.name)}</Td>
-                  <Td><Code>{truncate(account.address)}</Code></Td>
-                  <Td isNumeric>0.00</Td>
-                  <Td>{
-                    account.status == ONBOARDING_FLOW.open_account_requested &&
-                    <Button>Approve</Button>
-                    }</Td>
-                </Tr>
-              );
-            })
-          ) : (
+      <Text fontWeight={900}>
+        Bank Account -
+        <ChakraLink
+          isExternal
+          href={`https://testnet.xrpl.org/accounts/${bankAddress}`}
+        >
+          <Code>{bankAddress}</Code>
+        </ChakraLink>
+      </Text>
+      <TableContainer>
+        <Table variant="simple">
+          <TableCaption>{tableCaption}</TableCaption>
+          <Thead>
             <Tr>
-              <Td colSpan={3}>No users registered in the system.</Td>
+              <Th>Name</Th>
+              <Th>Account</Th>
+              <Th isNumeric>Balance</Th>
+              <Th>Actions</Th>
             </Tr>
-          )}
-        </Tbody>
-        <Tfoot>
-          <Tr>
-            <Th>Name</Th>
-            <Th>Account</Th>
-            <Th isNumeric>Balance</Th>
-            <Th>Actions</Th>
-          </Tr>
-        </Tfoot>
-      </Table>
-    </TableContainer>
+          </Thead>
+          <Tbody>
+            {accounts.length > 0 ? (
+              accounts.map((accountKey) => {
+                const account: Account = bank[accountKey];
+                return (
+                  <Tr>
+                    <Td>{titleCase(account.name)}</Td>
+                    <Td>
+                      <Code>{truncate(account.address)}</Code>
+                    </Td>
+                    <Td isNumeric>0.00</Td>
+                    <Td>
+                      {account.status ==
+                        ONBOARDING_FLOW.open_account_requested && (
+                        <Button onClick={() => fundAccount(account.address)}>
+                          Approve
+                        </Button>
+                      )}
+                    </Td>
+                  </Tr>
+                );
+              })
+            ) : (
+              <Tr>
+                <Td colSpan={3}>No users registered in the system.</Td>
+              </Tr>
+            )}
+          </Tbody>
+          <Tfoot>
+            <Tr>
+              <Th>Name</Th>
+              <Th>Account</Th>
+              <Th isNumeric>Balance</Th>
+              <Th>Actions</Th>
+            </Tr>
+          </Tfoot>
+        </Table>
+      </TableContainer>
     </>
   );
 };
