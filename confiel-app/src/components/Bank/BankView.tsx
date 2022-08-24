@@ -1,3 +1,4 @@
+import { CheckIcon, CopyIcon } from "@chakra-ui/icons";
 import {
   Table,
   TableCaption,
@@ -12,6 +13,8 @@ import {
   Text,
   Code,
   Button,
+  IconButton,
+  useClipboard
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ONBOARDING_FLOW } from "../../constants/onboarding";
@@ -19,6 +22,7 @@ import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { titleCase, truncate } from "../../lib/helpers";
 import { BankResponse } from "../../types/BankResponse";
 import { Account, BankStorage } from "../../types/BankStorage";
+import { BankCopyIcon } from "./BankCopyIcon";
 
 export const BankView = () => {
   const tableCaption = "Existing registered users and actions.";
@@ -78,7 +82,6 @@ export const BankView = () => {
             <Tr>
               <Th>Name</Th>
               <Th>Account</Th>
-              <Th isNumeric>Balance</Th>
               <Th>Actions</Th>
             </Tr>
           </Thead>
@@ -91,8 +94,8 @@ export const BankView = () => {
                     <Td>{titleCase(account.name)}</Td>
                     <Td>
                       <Code>{truncate(account.address)}</Code>
+                      <BankCopyIcon address={account.address}/>
                     </Td>
-                    <Td isNumeric>0.00</Td>
                     <Td>
                       {account.status ==
                         ONBOARDING_FLOW.open_account_requested && (
@@ -114,7 +117,6 @@ export const BankView = () => {
             <Tr>
               <Th>Name</Th>
               <Th>Account</Th>
-              <Th isNumeric>Balance</Th>
               <Th>Actions</Th>
             </Tr>
           </Tfoot>
