@@ -38,6 +38,10 @@ const Index = () => (
           <ListIcon as={CheckCircleIcon} color="green.500" />
             Supports <Code>X.509 PEM,DER</Code> certificates and <Code>PKCS#8 PEM,DEM</Code> or <Code>PKCS#5 PEM</Code> private keys.
         </ListItem>
+        <ListItem>
+          <ListIcon as={CheckCircleIcon} color="green.500" />
+            Transfers are both client and server-side using <Code>xrpl.js</Code> and <Code>Next.js</Code> API endpoints.
+        </ListItem>
       </List>
     </Main>
 
