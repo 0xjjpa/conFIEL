@@ -93,7 +93,7 @@ export const BankView = () => {
               accounts.map((accountKey) => {
                 const account: Account = bank[accountKey];
                 return (
-                  <Tr>
+                  <Tr key={account.address}>
                     <Td>{titleCase(account.name)}</Td>
                     <Td>
                       <ChakraLink

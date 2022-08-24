@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import { NextApiResponse, NextApiRequest } from 'next'
 import { Client, Wallet, Payment, dropsToXrp, getBalanceChanges, TransactionMetadata } from 'xrpl'
-import { DEFAULT_FUNDING_AMOUNT } from '../../../constants/bank';
+import { DEFAULT_FUNDING_AMOUNT, RESERVE_FUNDING_AMOUNT } from '../../../constants/bank';
 import { DEFAULT_XRPL_API_URL } from '../../../constants/xrpl';
 import { buildTransaction, isTransactionMetadata } from '../../../lib/xrpl';
 import { BankResponse } from '../../../types/BankResponse';
@@ -26,7 +26,7 @@ export default async function handler(
     buildTransaction(
       bankAddress,
       `${address}`,
-      `${DEFAULT_FUNDING_AMOUNT}`
+      `${RESERVE_FUNDING_AMOUNT + DEFAULT_FUNDING_AMOUNT}`
     )
   )
   const bankWallet = Wallet.fromSeed(privateKey);

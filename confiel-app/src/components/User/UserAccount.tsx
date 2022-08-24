@@ -1,4 +1,4 @@
-import { Code, Text, Button, Flex } from "@chakra-ui/react";
+import { Code, Text, Button, Flex, Link as ChakraLink } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Client, Wallet } from "xrpl";
 import {
@@ -85,10 +85,18 @@ export const UserAccount = ({
     <>
       <Flex direction="column">
         <Text>
-          Status <Code>{balance == ONBOARDING_DEFAULT_BALANCE ? 'Inactive' : 'Active'}</Code>
+          Status{" "}
+          <Code>
+            {balance == ONBOARDING_DEFAULT_BALANCE ? "Inactive" : "Active"}
+          </Code>
         </Text>
         <Text>
-          Wallet <Code>{wallet.address}</Code>
+          <ChakraLink
+            isExternal
+            href={`https://testnet.xrpl.org/accounts/${wallet.address}`}
+          >
+            Wallet <Code>{wallet.address}</Code>
+          </ChakraLink>
         </Text>
         <Text>
           Balance <Code>{Number(balance).toFixed(2)}</Code> XRP

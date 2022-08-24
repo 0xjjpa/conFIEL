@@ -2,6 +2,7 @@ import { Tabs, TabList, Tab, TabPanels, TabPanel } from "@chakra-ui/react";
 import { Credential } from "@nodecfdi/credentials";
 import { Client, Wallet } from "xrpl";
 import { UserAccount } from "./UserAccount";
+import { UserTransfer } from "./UserTransfer";
 
 export const UserActions = ({
   xrplClient,
@@ -19,6 +20,7 @@ export const UserActions = ({
       <TabList>
         <Tab>Sign Up</Tab>
         {FIEL && <Tab>Account</Tab>}
+        {FIEL && <Tab>Transfer</Tab>}
       </TabList>
 
       <TabPanels>
@@ -31,6 +33,9 @@ export const UserActions = ({
               name={FIEL?.legalName()}
             />
           )}
+        </TabPanel>
+        <TabPanel>
+          <UserTransfer xrplClient={xrplClient} wallet={wallet}/>
         </TabPanel>
       </TabPanels>
     </Tabs>

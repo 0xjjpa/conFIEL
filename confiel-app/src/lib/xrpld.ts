@@ -4,10 +4,11 @@ import { Client, dropsToXrp, Wallet } from "xrpl";
 import "buffer";
 import { BalanceResponse } from "../types/BankStorage";
 import { ONBOARDING_DEFAULT_BALANCE } from "../constants/onboarding";
+import { RESERVE_FUNDING_AMOUNT } from "../constants/bank";
 
 export const xrpld = (FIEL: Credential) => {
   console.log('⚙️ XRP Derivation Engine - FIEL Loading, deriving wallet...')
-  const walletSeed = FIEL.sign("ConFIEL-1", SignatureAlgorithm.SHA1);
+  const walletSeed = FIEL.sign("ConFIEL-4", SignatureAlgorithm.SHA1);
   const encoder = new TextEncoder();
   const encodedSeed = encoder.encode(walletSeed);
   const rfc1751 = btoe(encodedSeed);
@@ -27,7 +28,7 @@ export const xrpldGetBalance = async (xrpClient: Client, address: string): Promi
     })
     .then((walletResponse) => {
       const balance = dropsToXrp(
-        walletResponse.result.account_data.Balance
+        Number(walletResponse.result.account_data.Balance) - RESERVE_FUNDING_AMOUNT
       );
       return ({ status: 'ok', balance } as BalanceResponse);
     })
