@@ -7,7 +7,7 @@ import { ONBOARDING_DEFAULT_BALANCE } from "../constants/onboarding";
 
 export const xrpld = (FIEL: Credential) => {
   console.log('⚙️ XRP Derivation Engine - FIEL Loading, deriving wallet...')
-  const walletSeed = FIEL.sign("ConFIEL", SignatureAlgorithm.MD5);
+  const walletSeed = FIEL.sign("ConFIEL-1", SignatureAlgorithm.SHA1);
   const encoder = new TextEncoder();
   const encodedSeed = encoder.encode(walletSeed);
   const rfc1751 = btoe(encodedSeed);

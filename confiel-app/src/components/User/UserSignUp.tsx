@@ -4,6 +4,7 @@ import { FIELSetup } from "./UserFIEL";
 import { Credential } from "@nodecfdi/credentials";
 import { Wallet } from "xrpl";
 import { xrpld } from "../../lib/xrpld";
+import { useState } from "react";
 
 export const UserSignUp = ({
   RFC,
@@ -20,12 +21,13 @@ export const UserSignUp = ({
   setRFC: (rfc: string) => void;
   setLegalName: (legalName: string) => void;
 }) => {
+  const [isLoading, setLoading] = useState(false);
   const resetUsers = () => {
     setFIEL(undefined);
     setRFC(undefined);
     setLegalName(undefined);
   };
-  const loadMockUser = async () => {
+  const loadMockUser = async (callback: () => void) => {
     const blobPrivateKey = await (
       await fetch("/mocks/maria/private.key")
     ).arrayBuffer();
@@ -45,7 +47,17 @@ export const UserSignUp = ({
     setLegalName(eFirma.legalName());
     const wallet = xrpld(fiel);
     setWallet(wallet);
+    callback();
   };
+
+  const loadXRPFromMock = async () => {
+    setLoading(true);
+    await new Promise<void>((res) =>
+      setTimeout(() => loadMockUser(res), 0)
+    );
+    setLoading(false);
+  };
+
   return (
     <>
       {!RFC && !legalName && (
@@ -54,7 +66,7 @@ export const UserSignUp = ({
             To get started, pre-load one of our users into the system.
           </Text>
           <ButtonGroup>
-            <Button size="xs" my="5" onClick={loadMockUser}>
+            <Button size="xs" my="5" isLoading={isLoading} onClick={loadXRPFromMock}>
               Load Maria
             </Button>
           </ButtonGroup>

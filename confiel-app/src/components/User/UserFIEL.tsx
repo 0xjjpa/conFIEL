@@ -72,8 +72,7 @@ export const FIELSetup = ({
     hiddenFileInputCer.current.click();
   };
 
-  const handleXRPGeneration = () => {
-    setLoading(true);
+  const handleXRPGeneration = (callback: () => void) => {
     const fiel = Credential.create(
       String(certificate),
       String(privateKey),
@@ -83,9 +82,17 @@ export const FIELSetup = ({
     setFIEL(fiel);
     setRFC(eFirma.rfc());
     setLegalName(eFirma.legalName());
-    setLoading(false);
     const wallet = xrpld(fiel);
     setWallet(wallet);
+    callback();
+  };
+
+  const loadXRPFromWallet = async () => {
+    setLoading(true);
+    await new Promise<void>((res) =>
+      setTimeout(() => handleXRPGeneration(res), 100)
+    );
+    setLoading(false);
   };
 
   return (
@@ -151,7 +158,7 @@ export const FIELSetup = ({
               disabled={!(password.length > 0)}
               isLoading={isLoading}
               size="sm"
-              onClick={handleXRPGeneration}
+              onClick={() => loadXRPFromWallet()}
             >
               Enter
             </Button>
