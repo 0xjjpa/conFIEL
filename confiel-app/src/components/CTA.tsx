@@ -13,7 +13,7 @@ export const CTA = () => (
   >
     <Button
       as={ChakraLink}
-      disabled
+      href="/use-cases"
       variant="outline"
       colorScheme="green"
       rounded="button"
@@ -21,7 +21,7 @@ export const CTA = () => (
       mx={2}
       width="full"
     >
-      Overview (WIP)
+      Use Cases
     </Button>
     <Button
       as={ChakraLink}
