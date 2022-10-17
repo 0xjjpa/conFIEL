@@ -15,12 +15,11 @@ async function main() {
   const fulfillment_hex = fulfillment.serializeBinary().toString('hex').toUpperCase()
   console.log('Fulfillment:', fulfillment_hex)
 
-  const buildEscrowCreate = (fromAccount: string, toAccount: string, amount = "1000", finishAfter: number, cancelAfter: number): EscrowCreate => ({
+  const buildEscrowCreate = (fromAccount: string, toAccount: string, amount = "1000", cancelAfter: number): EscrowCreate => ({
     "TransactionType": "EscrowCreate",
     "Account": fromAccount,
     "Amount": amount,
     "Destination": toAccount,
-    "FinishAfter": finishAfter,
     "CancelAfter": cancelAfter,
   })
 
@@ -75,7 +74,6 @@ async function main() {
       aliceWallet.address,
       `${DEFAULT_AMOUNT}`,
       CLOSE_TIME + FIVE_MINUTES,
-      CLOSE_TIME + FIVE_MINUTES
     ), condition)
   )
 

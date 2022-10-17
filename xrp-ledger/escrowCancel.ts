@@ -1,16 +1,15 @@
-import { Client, Wallet, Payment, dropsToXrp, getBalanceChanges, TransactionMetadata, EscrowCreate, EscrowFinish } from 'xrpl'
+import { Client, Wallet, Payment, dropsToXrp, getBalanceChanges, TransactionMetadata, EscrowFinish, EscrowCancel } from 'xrpl'
 import 'dotenv/config'
 import { randomBytes } from 'crypto'
 const cc = require('five-bells-condition')
 
 async function main() {
 
-  const buildEscrowCreate = (fromAccount: string, toAccount: string, amount = "1000", finishAfter: number): EscrowCreate => ({
-    "TransactionType": "EscrowCreate",
+  const buildEscrowCancel = (fromAccount: string, sequence: number): EscrowCancel => ({
+    "TransactionType": "EscrowCancel",
     "Account": fromAccount,
-    "Amount": amount,
-    "Destination": toAccount,
-    "FinishAfter": finishAfter,
+    "Owner": fromAccount,
+    "OfferSequence": sequence,
   })
 
   const buildEscrowFinish = (fromAccount: string, toAccount: string, offerSequence: number): EscrowFinish => ({
@@ -65,11 +64,10 @@ async function main() {
   console.log('Alice Balance', dropsToXrp(aliceResponse.result.account_data.Balance));
 
   const prepared = await client.autofill(
-    includeConditions(buildEscrowFinish(
+    buildEscrowCancel(
       aliceWallet.address,
-      aliceWallet.address,
-      30279954,
-    ), "A0258020E32F7C32F035AC62E167B2A6A0DB6A8F9AADE08B8C4BCD57E8045230559778AD810120", "A0228020FAA7E4115056EAA6CEE505E40B96FCDED702E70EDB7F4DE2559852DD8F499C06")
+      30279950,
+    )
   )
 
   const max_ledger = prepared.LastLedgerSequence

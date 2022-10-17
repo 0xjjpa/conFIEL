@@ -18,6 +18,9 @@ import { UserActions } from "../components/User/UserActions";
 import { UserSignUp } from "../components/User/UserSignUp";
 import { CONFIEL_ROLES } from "../constants/roles";
 import { BankView } from "../components/Bank/BankView";
+import { DEFAULT_XRPL_API_URL } from "../constants/xrpl";
+import { CentralBankView } from "../components/CentralBank/CentralBankView";
+import { getCookies } from "cookies-next";
 
 const Index = () => {
   const [currentRole, setCurrentRole] = useState(undefined);
@@ -28,11 +31,9 @@ const Index = () => {
   const [RFC, setRFC] = useState("");
   const [legalName, setLegalName] = useState("");
 
-  const RIPPLE_TESTNET_ENDPOINT = "wss://s.altnet.rippletest.net:51233";
-
   useEffect(() => {
     const connectToXRP = async () => {
-      const client = new Client(RIPPLE_TESTNET_ENDPOINT);
+      const client = new Client(DEFAULT_XRPL_API_URL);
       await client.connect();
       setXRPLClient(client);
     };
@@ -48,6 +49,18 @@ const Index = () => {
       if needed to be comply with local authorities.
     </Text>
     <BankView />
+    </>
+  )
+
+  const centralBankRole = (
+    <>
+      <Text>
+      A central bank is an institution that manages the currency and monetary policy of a
+      country. Central Banks can issue new digital currencies (CBDC) which can then be used
+      by Commercial Banks for multiple retail-based use cases to increase adoption in the
+      financial sector.
+      </Text>
+      <CentralBankView />
     </>
   )
 
@@ -82,6 +95,9 @@ const Index = () => {
         <NavBar currentRole={currentRole} setCurrentRole={setCurrentRole} />
         {
           currentRole == CONFIEL_ROLES.USER && userRole
+        }
+        {
+          currentRole == CONFIEL_ROLES.CENTRAL_BANK && centralBankRole
         }
         {
           currentRole == CONFIEL_ROLES.BANK && bankRole

@@ -17,5 +17,5 @@ export const Hero = ({ title }: { title: string }) => (
 )
 
 Hero.defaultProps = {
-  title: 'conFIEL',
+  title: 'conFIEL v2',
 }
