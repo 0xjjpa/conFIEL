@@ -1,6 +1,6 @@
 export enum CONFIEL_ROLES {
-  "CENTRAL_BANK" = "Central Bank",
-  "BANK" = "Commercial Bank",
+  "CENTRAL_BANK" = "Banxico",
+  "BANK" = "Bank",
   "USER" = "User",
 }
-export const DEFAULT_ROLE = CONFIEL_ROLES.USER
+export const DEFAULT_ROLE = CONFIEL_ROLES.CENTRAL_BANK

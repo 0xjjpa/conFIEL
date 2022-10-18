@@ -55,8 +55,8 @@ const Index = () => {
   const centralBankRole = (
     <>
       <Text>
-      A central bank is an institution that manages the currency and monetary policy of a
-      country. Central Banks can issue new digital currencies (CBDC) which can then be used
+      Banxico is Mexico’s central bank, which manages the currency and monetary policy of a
+      country. Banxico can issue new digital currencies (CBDC) which can then be used
       by Commercial Banks for multiple retail-based use cases to increase adoption in the
       financial sector.
       </Text>
