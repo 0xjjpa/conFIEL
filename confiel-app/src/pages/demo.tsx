@@ -43,10 +43,9 @@ const Index = () => {
   const bankRole = (
     <>
     <Text>
-      A bank is a regulated centralized entity able to issue digital currencies such as
-      stablecoins to provide users with online payment capabilities. Although payments can
-      be done peer-to-peer (P2P), a bank is always able to freeze and control transfers
-      if needed to be comply with local authorities.
+      A commercial bank is a regulated centralized entity able to distribute issued retail-CBDCs
+      to their users with their existing infrastructure and payment capabilities. Once issued, users
+      can then exchange goods and values given the CBDC agreed value.
     </Text>
     <BankView />
     </>

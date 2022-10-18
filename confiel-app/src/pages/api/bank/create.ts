@@ -1,33 +1,33 @@
-import { setCookie } from 'cookies-next';
+import { getCookie, setCookie } from 'cookies-next';
 import 'dotenv/config'
 import { NextApiResponse, NextApiRequest } from 'next'
-import { Client } from 'xrpl';
-import { DEFAULT_XRPL_API_URL } from '../../../constants/xrpl';
-import { xrpldGetBalance } from '../../../lib/xrpld';
-import { BankResponse } from '../../../types/BankResponse';
+import { DEFAULT_XRPL_API_FAUCET_URL, DEFAULT_XRPL_API_URL } from '../../../constants/xrpl';
+import { CentralBankResponse } from '../../../types/CentralBankResponse';
+import { XRPLFaucetAccount, XRPLFaucetBank, XRPLFaucetResponse } from '../../../types/XRPLFaucetResponse';
 
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<BankResponse>
+  res: NextApiResponse<CentralBankResponse>
 ) {
 
-  const client = new Client(DEFAULT_XRPL_API_URL);
-  await client.connect();
+  const { method, body: { id = 'bbva' } } = req;
 
-  const tmpBank = {
-    "account": {
-      "xAddress": "T7CtvxELZmCWwuJvNCyyXmbTYPoepbsBeNJdBAdwqzjozKt",
-      "secret": "sngE88eD5eCqwbhGnbLfp5oBF3toK",
-      "classicAddress": "rawRmq1u5wKUDTYFzXrECKAsrCYwYkR6hf",
-      "address": "rawRmq1u5wKUDTYFzXrECKAsrCYwYkR6hf"
-    }
-  }
+  // if (method != 'POST') return res.status(405).json({ status: 'err', err: 'Only GET method allowed' })
 
-  setCookie('bank-1', tmpBank.account.address, { req, res, maxAge: 60 * 60 * 24 });
+  const response: XRPLFaucetResponse = await (
+    await fetch(DEFAULT_XRPL_API_FAUCET_URL, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+  ).json();
 
-  client.disconnect();
-
-
-  return res.status(200).json({ status: "ok" })
+  const { account, balance } = response;
+  const xprlFaucetBank = { account, balance }
+  const uuid = `bank-${id}`
+  setCookie(uuid, JSON.stringify(xprlFaucetBank), { req, res, maxAge: 60 * 60 * 24 });
+  return res.status(200).json({ status: "ok", bank: xprlFaucetBank })
 }
