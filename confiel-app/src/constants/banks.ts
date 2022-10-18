@@ -1,5 +1,6 @@
 export const BANKS = [
   {
+    id: 'bbva',
     name: "BBVA",
     icon: {
       url: "/images/banks/bbva.svg",
@@ -9,6 +10,7 @@ export const BANKS = [
     longName: "Banco Bilbao Vizcaya Argentaria"
   },
   {
+    id: 'bmx',
     name: "Banamex",
     icon: {
       url: "/images/banks/banamex.svg",
@@ -18,6 +20,7 @@ export const BANKS = [
     longName: "Grupo Financiero Banamex"
   },
   {
+    id: 'std',
     name: "Santander",
     icon: {
       url: "/images/banks/santander.svg",
@@ -27,6 +30,7 @@ export const BANKS = [
     longName: "Banco Santander"
   },
   {
+    id: 'bnt',
     name: "Banorte",
     icon: {
       url: "/images/banks/banorte.svg",

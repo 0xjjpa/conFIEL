@@ -10,6 +10,7 @@ export const CentralBankList = () => {
       <List spacing={3}>
         {BANKS.map((bank) => (
           <CommercialBankListItem
+            id={bank.id}
             icon={bank.icon}
             name={bank.name}
             longName={bank.longName}

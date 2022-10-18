@@ -3,10 +3,12 @@ import Image from "next/image";
 import { CommercialBankAccount } from "./CommercialBankAccount";
 
 export const CommercialBankListItem = ({
+  id,
   icon,
   name,
   longName,
 }: {
+  id: string,
   icon: { url: string; width: number; height: number };
   name: string;
   longName: string;
@@ -26,7 +28,7 @@ export const CommercialBankListItem = ({
             </Text>
           )}
         </Flex>
-        <CommercialBankAccount />
+        <CommercialBankAccount id={id} />
       </Flex>
     </ListItem>
   );
