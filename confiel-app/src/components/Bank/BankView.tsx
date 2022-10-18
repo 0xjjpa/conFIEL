@@ -16,12 +16,14 @@ import {
   IconButton,
   useClipboard,
 } from "@chakra-ui/react";
+import { getCookie } from "cookies-next";
 import { useEffect, useState } from "react";
 import { ONBOARDING_FLOW } from "../../constants/onboarding";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { titleCase, truncate } from "../../lib/helpers";
 import { BankResponse } from "../../types/BankResponse";
 import { Account, BankStorage } from "../../types/BankStorage";
+import { XRPLFaucetBank } from "../../types/XRPLFaucetResponse";
 import { BankCopyIcon } from "./BankCopyIcon";
 
 export const BankView = () => {
@@ -33,10 +35,10 @@ export const BankView = () => {
 
   useEffect(() => {
     const loadBankData = async () => {
-      const addressResponse: BankResponse = await (
-        await fetch("/api/bank/address")
-      ).json();
-      setBankAddress(addressResponse?.address);
+      const cachedAddress = getCookie("bank-current");
+      if (cachedAddress) {
+        setBankAddress(String(cachedAddress));
+      }
     };
     loadBankData();
   }, []);
@@ -107,7 +109,10 @@ export const BankView = () => {
                     <Td>
                       {account.status ==
                         ONBOARDING_FLOW.open_account_requested && (
-                        <Button isLoading={isLoading} onClick={() => fundAccount(account.address)}>
+                        <Button
+                          isLoading={isLoading}
+                          onClick={() => fundAccount(account.address)}
+                        >
                           Approve
                         </Button>
                       )}

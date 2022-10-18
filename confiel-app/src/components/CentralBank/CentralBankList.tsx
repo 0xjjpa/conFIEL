@@ -4,7 +4,7 @@ import Image from "next/image";
 import { BANKS } from "../../constants/banks";
 import { CommercialBankListItem } from "./CommercialBankListItem";
 
-export const CentralBankList = () => {
+export const CentralBankList = ({ selectBank }: { selectBank: () => void }) => {
   return (
     <>
       <List spacing={3}>
@@ -14,6 +14,7 @@ export const CentralBankList = () => {
             icon={bank.icon}
             name={bank.name}
             longName={bank.longName}
+            selectBank={selectBank}
           />
         ))}
       </List>

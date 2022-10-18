@@ -59,7 +59,7 @@ const Index = () => {
       by Commercial Banks for multiple retail-based use cases to increase adoption in the
       financial sector.
       </Text>
-      <CentralBankView />
+      <CentralBankView selectBank={() => setCurrentRole(CONFIEL_ROLES.BANK)} />
     </>
   )
 

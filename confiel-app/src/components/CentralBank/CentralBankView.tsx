@@ -1,10 +1,10 @@
 import { CentralBankAccount } from "./CentralBankAccount";
 import { CentralBankList } from "./CentralBankList";
 
-export const CentralBankView = () => {
+export const CentralBankView = ({ selectBank }: { selectBank: () => void }) => {
   return (
     <>
-      <CentralBankList />
+      <CentralBankList selectBank={selectBank}/>
     </>
   );
 };
