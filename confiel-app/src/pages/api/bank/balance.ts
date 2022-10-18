@@ -7,14 +7,14 @@ import { BankResponse } from '../../../types/BankResponse';
 
 
 export default async function handler(
-  _req: NextApiRequest,
+  req: NextApiRequest,
   res: NextApiResponse<BankResponse>
 ) {
 
+  const { method, body: { address } } = req;
+
   const client = new Client(DEFAULT_XRPL_API_URL);
   await client.connect();
-
-  const address = String(process.env.BANK_XRP_PUBLIC_KEY);
 
   const balanceResponse = await xrpldGetBalance(
     client,

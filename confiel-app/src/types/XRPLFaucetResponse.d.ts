@@ -12,7 +12,6 @@ export type XRPLFaucetResponse = {
   "balance": number
 }
 
-export type XRPLFaucetBank = {
-  "account": XRPLFaucetAccount,
+export type XRPLFaucetBank = XRPLFaucetAccount & {
   "balance": number
 }

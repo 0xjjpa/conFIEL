@@ -4,7 +4,6 @@ import { CentralBankList } from "./CentralBankList";
 export const CentralBankView = () => {
   return (
     <>
-      <CentralBankAccount />
       <CentralBankList />
     </>
   );
