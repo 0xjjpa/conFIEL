@@ -112,7 +112,7 @@ export const BankView = ({ bankId }: { bankId: string }) => {
       </Flex>
 
       <TableContainer>
-        <Table variant="simple">
+        <Table variant="simple" size='sm'>
           <TableCaption>{tableCaption}</TableCaption>
           <Thead>
             <Tr>
