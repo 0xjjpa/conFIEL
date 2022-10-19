@@ -7,6 +7,7 @@ import {
   ONBOARDING_FLOW,
 } from "../../constants/onboarding";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { truncate } from "../../lib/helpers";
 import { xrpldGetBalance } from "../../lib/xrpld";
 import { Account, BankStorage } from "../../types/BankStorage";
 
@@ -95,7 +96,7 @@ export const UserAccount = ({
             isExternal
             href={`https://testnet.xrpl.org/accounts/${wallet.address}`}
           >
-            Wallet <Code>{wallet.address}</Code>
+            Wallet <Code>{truncate(wallet.address, 30)}</Code>
           </ChakraLink>
         </Text>
         <Text>
@@ -104,7 +105,7 @@ export const UserAccount = ({
       </Flex>
       {account?.status === ONBOARDING_FLOW.open_account && (
         <Button mt="2" onClick={moveNextStage}>
-          Open Account
+          Open Account (15 XRP)
         </Button>
       )}
       {account?.status === ONBOARDING_FLOW.open_account_requested && (

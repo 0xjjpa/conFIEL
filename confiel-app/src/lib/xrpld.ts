@@ -8,7 +8,7 @@ import { RESERVE_FUNDING_AMOUNT } from "../constants/bank";
 
 export const xrpld = (FIEL: Credential) => {
   console.log('⚙️ XRP Derivation Engine - FIEL Loading, deriving wallet...')
-  const walletSeed = FIEL.sign("ConFIEL-10", SignatureAlgorithm.SHA1);
+  const walletSeed = FIEL.sign("ConFIEL-11", SignatureAlgorithm.SHA1);
   const encoder = new TextEncoder();
   const encodedSeed = encoder.encode(walletSeed);
   const rfc1751 = btoe(encodedSeed);

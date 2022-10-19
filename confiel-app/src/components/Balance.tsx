@@ -8,6 +8,7 @@ export const Balance = ({ address }: { address: string }) => {
 
   useEffect(() => {
     const loadBalance = async () => {
+      if (address.length == 0) return;
       setLoading(true);
       const response: BankResponse = await (
         await fetch("/api/bank/balance", {
@@ -27,7 +28,7 @@ export const Balance = ({ address }: { address: string }) => {
       
     };
     loadBalance();
-  }, []);
+  }, [address]);
   return (
     <Skeleton isLoaded={!isLoading}>
       <Text fontFamily="mono">{balance}</Text>

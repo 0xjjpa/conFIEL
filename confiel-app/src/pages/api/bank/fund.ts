@@ -12,15 +12,14 @@ export default async function handler(
   res: NextApiResponse<BankResponse>
 ) {
 
-  const { method, body: { address } } = req;
+  const { method, body: { privateKey, bankAddress, address } } = req;
 
   if (method != 'POST') return res.status(405).json({ status: 'err', err: 'Only GET method allowed' })
+  if (!privateKey) return res.status(501).json({ status: 'err', err: 'No private key given' })
+  if (!bankAddress) return res.status(501).json({ status: 'err', err: 'No bank address given' })
 
   const client = new Client(DEFAULT_XRPL_API_URL);
   await client.connect()
-
-  const privateKey = String(process.env.BANK_XRP_SECRET_KEY);
-  const bankAddress = String(process.env.BANK_XRP_PUBLIC_KEY);
 
   const prepared = await client.autofill(
     buildTransaction(

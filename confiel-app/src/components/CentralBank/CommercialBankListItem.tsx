@@ -3,6 +3,7 @@ import { getCookie, setCookie } from "cookies-next";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { XRPLFaucetBank } from "../../types/XRPLFaucetResponse";
+import { BankItem } from "../Bank/BankItem";
 import { CommercialBankAccount } from "./CommercialBankAccount";
 
 export const CommercialBankListItem = ({
@@ -18,7 +19,7 @@ export const CommercialBankListItem = ({
   longName: string;
   selectBank: () => void;
 }) => {
-  const [isLargerThan1280] = useMediaQuery("(min-width: 480px)");
+
   const [bank, setBank] = useState<XRPLFaucetBank>();
   const uuid = `bank-${id}`;
 
@@ -29,8 +30,8 @@ export const CommercialBankListItem = ({
     }
   }, []);
 
-  const selectAddress = (address: string) => {
-    setCookie('bank-current', address);
+  const selectBankId = (id: string) => {
+    setCookie('bank-current', id);
     selectBank();
   }
 
@@ -44,16 +45,8 @@ export const CommercialBankListItem = ({
       }}
     >
       <Flex alignItems="center" justifyContent="space-between">
-        <Flex alignItems="center" onClick={() => selectAddress(bank.account.address)}>
-          <Image src={icon.url} width={icon.width} height={icon.height} />
-          <Text ml="2" color="black.500">
-            {name}
-          </Text>
-          {isLargerThan1280 && (
-            <Text fontSize="xs" ml="2" color="gray.600">
-              {longName}
-            </Text>
-          )}
+        <Flex alignItems="center" onClick={() => selectBankId(id)}>
+          <BankItem bank={{ id, name, longName, icon}} />
         </Flex>
         {bank ? <CommercialBankAccount address={bank.account.address} />: <Text>Open Account.</Text>}
       </Flex>

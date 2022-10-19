@@ -1,5 +1,6 @@
 import { CheckIcon, CopyIcon } from "@chakra-ui/icons";
 import {
+  Box,
   Table,
   TableCaption,
   TableContainer,
@@ -15,40 +16,67 @@ import {
   Button,
   IconButton,
   useClipboard,
+  Flex,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import { getCookie } from "cookies-next";
 import { useEffect, useState } from "react";
+import { BANKS } from "../../constants/banks";
 import { ONBOARDING_FLOW } from "../../constants/onboarding";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { titleCase, truncate } from "../../lib/helpers";
 import { BankResponse } from "../../types/BankResponse";
+import { Bank } from "../../types/Banks";
 import { Account, BankStorage } from "../../types/BankStorage";
 import { XRPLFaucetBank } from "../../types/XRPLFaucetResponse";
+import { AddressExplorerLink } from "../AddressExplorerLink";
+import { Balance } from "../Balance";
 import { BankCopyIcon } from "./BankCopyIcon";
+import { BankItem } from "./BankItem";
 
 export const BankView = () => {
   const tableCaption = "Existing registered users and actions.";
   const [bankAddress, setBankAddress] = useState<string>("");
   const [bank, setBank] = useLocalStorage("bank", {});
+  const [bankId, setBankId] = useState<string>();
+  const [bankItem, setBankItem] = useState<Bank>();
+  const [bankAccount, setBankAccount] = useState<XRPLFaucetBank>();
+  const [isLargerThan1280] = useMediaQuery("(min-width: 480px)");
   const [accounts, setAccounts] = useState([]);
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
     const loadBankData = async () => {
-      const cachedAddress = getCookie("bank-current");
-      if (cachedAddress) {
-        setBankAddress(String(cachedAddress));
+      const bankId = getCookie("bank-current");
+      if (bankId) {
+        setBankId(String(bankId));
+        const bank = BANKS.find((bank) => bank.id != bankId);
+        setBankItem(bank);
       }
     };
     loadBankData();
   }, []);
+
+  useEffect(() => {
+    const uuid = `bank-${bankId}`;
+    const cachedBank = getCookie(uuid);
+    if (cachedBank) {
+      const bankAccount: XRPLFaucetBank = JSON.parse(String(cachedBank));
+      setBankAccount(bankAccount);
+      setBankAddress(bankAccount.account.address);
+    }
+  }, [bankId]);
 
   const fundAccount = async (address: string) => {
     setLoading(true);
     const response: BankResponse = await (
       await fetch("/api/bank/fund", {
         method: "POST",
-        body: JSON.stringify({ address }),
+        body: JSON.stringify({
+          address,
+          privateKey: bankAccount.account.secret,
+          bankAddress: bankAccount.account.address,
+        }),
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -71,15 +99,19 @@ export const BankView = () => {
 
   return (
     <>
-      <Text fontWeight={900}>
-        Bank Account -
-        <ChakraLink
-          isExternal
-          href={`https://testnet.xrpl.org/accounts/${bankAddress}`}
-        >
-          <Code>{bankAddress}</Code>
-        </ChakraLink>
-      </Text>
+      <Flex direction="column">
+        <Flex alignItems="center">{bankItem && <BankItem bank={bankItem} />}</Flex>
+        <Flex alignItems="center" justifyContent="space-between">
+          <Text fontWeight={900} fontFamily="mono">
+            {isLargerThan1280 ? bankAddress : truncate(bankAddress, 30)}
+          </Text>
+          <Flex>
+            <Balance address={bankAddress} />
+            <AddressExplorerLink address={bankAddress} />
+          </Flex>
+        </Flex>
+      </Flex>
+
       <TableContainer>
         <Table variant="simple">
           <TableCaption>{tableCaption}</TableCaption>
@@ -102,7 +134,7 @@ export const BankView = () => {
                         isExternal
                         href={`https://testnet.xrpl.org/accounts/${account.address}`}
                       >
-                        <Code>{truncate(account.address)}</Code>
+                        <Code>{truncate(account.address, 30)}</Code>
                       </ChakraLink>
                       <BankCopyIcon address={account.address} />
                     </Td>

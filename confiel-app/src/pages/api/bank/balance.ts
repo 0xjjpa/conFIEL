@@ -16,6 +16,8 @@ export default async function handler(
   const client = new Client(DEFAULT_XRPL_API_URL);
   await client.connect();
 
+  if (!address) return res.status(501).json({ status: "ok", err: 'No address provided' })
+
   const balanceResponse = await xrpldGetBalance(
     client,
     address
