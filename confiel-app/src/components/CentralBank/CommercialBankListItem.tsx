@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { XRPLFaucetBank } from "../../types/XRPLFaucetResponse";
 import { BankItem } from "../Bank/BankItem";
+import { OpenBank } from "../OpenBank";
+import { Status } from "../Status";
 import { CommercialBankAccount } from "./CommercialBankAccount";
 
 export const CommercialBankListItem = ({
@@ -11,7 +13,7 @@ export const CommercialBankListItem = ({
   icon,
   name,
   longName,
-  selectBank
+  selectBank,
 }: {
   id: string;
   icon: { url: string; width: number; height: number };
@@ -19,36 +21,45 @@ export const CommercialBankListItem = ({
   longName: string;
   selectBank: () => void;
 }) => {
-
   const [bank, setBank] = useState<XRPLFaucetBank>();
   const uuid = `bank-${id}`;
 
-  useEffect(() => {
+  const loadBankFromCache = () => {
     const cachedBank = getCookie(uuid);
     if (cachedBank) {
       setBank(JSON.parse(String(cachedBank)));
     }
+  };
+
+  useEffect(() => {
+    loadBankFromCache();
   }, []);
 
   const selectBankId = (id: string) => {
-    setCookie('bank-current', id);
+    setCookie("bank-current", id);
     selectBank();
-  }
+  };
 
   return (
     <ListItem
       px="2"
-      _hover={{
+      _hover={bank && {
         opacity: "0.8",
         background: "rgba(0,0,0,0.1)",
         borderRadius: "5",
+        cursor: "pointer"
       }}
     >
       <Flex alignItems="center" justifyContent="space-between">
-        <Flex alignItems="center" onClick={() => selectBankId(id)}>
-          <BankItem bank={{ id, name, longName, icon}} />
+        <Flex alignItems="center" onClick={() => bank && selectBankId(id)}>
+          <Status isAvailable={!!bank} />
+          <BankItem bank={{ id, name, longName, icon }} />
         </Flex>
-        {bank ? <CommercialBankAccount address={bank.account.address} />: <Text>Open Account.</Text>}
+        {bank ? (
+          <CommercialBankAccount address={bank.account.address} />
+        ) : (
+          <OpenBank id={id} callback={loadBankFromCache} />
+        )}
       </Flex>
     </ListItem>
   );

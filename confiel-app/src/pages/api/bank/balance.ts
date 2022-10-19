@@ -20,7 +20,8 @@ export default async function handler(
 
   const balanceResponse = await xrpldGetBalance(
     client,
-    address
+    address,
+    true
   );
 
   client.disconnect();

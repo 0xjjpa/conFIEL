@@ -1,4 +1,3 @@
-import { CentralBankAccount } from "./CentralBankAccount";
 import { CentralBankList } from "./CentralBankList";
 
 export const CentralBankView = ({ selectBank }: { selectBank: () => void }) => {

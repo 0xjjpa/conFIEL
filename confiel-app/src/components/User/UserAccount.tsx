@@ -12,10 +12,12 @@ import { xrpldGetBalance } from "../../lib/xrpld";
 import { Account, BankStorage } from "../../types/BankStorage";
 
 export const UserAccount = ({
+  bankId,
   xrplClient,
   wallet,
   name,
 }: {
+  bankId: string;
   xrplClient: Client;
   wallet: Wallet;
   name: string;
@@ -25,7 +27,7 @@ export const UserAccount = ({
     address: wallet.address,
     name,
   };
-  const [bank, setBank] = useLocalStorage("bank", {
+  const [bank, setBank] = useLocalStorage(`bank-${bankId}`, {
     [wallet.address]: newAccount,
   });
   const [account, setAccount] = useState<Account>();

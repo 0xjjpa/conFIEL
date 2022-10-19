@@ -5,11 +5,13 @@ import { UserAccount } from "./UserAccount";
 import { UserTransfer } from "./UserTransfer";
 
 export const UserActions = ({
+  bankId,
   xrplClient,
   FIEL,
   wallet,
   SignUp = <></>,
 }: {
+  bankId: string;
   xrplClient: Client;
   FIEL?: Credential;
   wallet: Wallet;
@@ -28,6 +30,7 @@ export const UserActions = ({
         <TabPanel>
           {wallet && FIEL && (
             <UserAccount
+              bankId={bankId}
               xrplClient={xrplClient}
               wallet={wallet}
               name={FIEL?.legalName()}

@@ -34,28 +34,27 @@ import { Balance } from "../Balance";
 import { BankCopyIcon } from "./BankCopyIcon";
 import { BankItem } from "./BankItem";
 
-export const BankView = () => {
+export const BankView = ({ bankId }: { bankId: string }) => {
   const tableCaption = "Existing registered users and actions.";
   const [bankAddress, setBankAddress] = useState<string>("");
-  const [bank, setBank] = useLocalStorage("bank", {});
-  const [bankId, setBankId] = useState<string>();
   const [bankItem, setBankItem] = useState<Bank>();
   const [bankAccount, setBankAccount] = useState<XRPLFaucetBank>();
   const [isLargerThan1280] = useMediaQuery("(min-width: 480px)");
   const [accounts, setAccounts] = useState([]);
   const [isLoading, setLoading] = useState(false);
+  const [bank, setBank] = useLocalStorage(`bank-${bankId}`, {});
+
+  console.log("Bank ID", bankId);
 
   useEffect(() => {
     const loadBankData = async () => {
-      const bankId = getCookie("bank-current");
       if (bankId) {
-        setBankId(String(bankId));
-        const bank = BANKS.find((bank) => bank.id != bankId);
+        const bank = BANKS.find((bank) => bank.id == bankId);
         setBankItem(bank);
       }
     };
     loadBankData();
-  }, []);
+  }, [bankId]);
 
   useEffect(() => {
     const uuid = `bank-${bankId}`;

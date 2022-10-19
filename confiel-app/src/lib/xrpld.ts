@@ -19,7 +19,7 @@ export const xrpld = (FIEL: Credential) => {
   return wallet;
 };
 
-export const xrpldGetBalance = async (xrpClient: Client, address: string): Promise<BalanceResponse> => {
+export const xrpldGetBalance = async (xrpClient: Client, address: string, noReserve?: boolean): Promise<BalanceResponse> => {
   return xrpClient
     .request({
       command: "account_info",
@@ -28,7 +28,7 @@ export const xrpldGetBalance = async (xrpClient: Client, address: string): Promi
     })
     .then((walletResponse) => {
       const balance = dropsToXrp(
-        Number(walletResponse.result.account_data.Balance) - RESERVE_FUNDING_AMOUNT
+        Number(walletResponse.result.account_data.Balance) - (noReserve ? 0 : RESERVE_FUNDING_AMOUNT)
       );
       return ({ status: 'ok', balance } as BalanceResponse);
     })
