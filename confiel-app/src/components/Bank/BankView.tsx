@@ -148,7 +148,7 @@ export const BankView = ({
                 return (
                   <Tr key={account.address}>
                     <Td>
-                      {currentWallet.classicAddress == account.address && (
+                      {currentWallet?.classicAddress == account.address && (
                         <Status isAvailable={true} />
                       )}
                       {titleCase(account.name)}

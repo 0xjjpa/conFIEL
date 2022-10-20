@@ -1,4 +1,4 @@
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from "@chakra-ui/react";
+import { Tabs, TabList, Tab, TabPanels, TabPanel, Text } from "@chakra-ui/react";
 import { Credential } from "@nodecfdi/credentials";
 import { Client, Wallet } from "xrpl";
 import { UserAccount } from "./UserAccount";
@@ -22,7 +22,7 @@ export const UserActions = ({
       <TabList>
         <Tab>Sign Up</Tab>
         {FIEL && <Tab>Account</Tab>}
-        {FIEL && <Tab>Transfer</Tab>}
+        {FIEL && <Tab>Actions</Tab>}
       </TabList>
 
       <TabPanels>
@@ -38,6 +38,7 @@ export const UserActions = ({
           )}
         </TabPanel>
         <TabPanel>
+          <Text fontWeight="bold">Transfer</Text>
           <UserTransfer xrplClient={xrplClient} wallet={wallet}/>
         </TabPanel>
       </TabPanels>

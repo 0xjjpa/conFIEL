@@ -86,6 +86,14 @@ export const UserSignUp = ({
               size="xs"
               my="5"
               isLoading={isLoading}
+              onClick={() => loadXRPFromMock("oscar")}
+            >
+              Load Oscar
+            </Button>
+            <Button
+              size="xs"
+              my="5"
+              isLoading={isLoading}
               onClick={() => loadXRPFromMock("xochilt")}
             >
               Load Xochilt

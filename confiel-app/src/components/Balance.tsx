@@ -27,7 +27,8 @@ export const Balance = ({
     ).json();
     const { status } = response;
     if (status == "ok") {
-      setBalance(Number(response.balance).toFixed(2));
+      const balance = Number(response.balance)
+      isNaN(balance) ? setBalance("0.00") : setBalance(balance.toFixed(2));
     }
     setTimeout(() => setLoading(false), 1000);
   };
