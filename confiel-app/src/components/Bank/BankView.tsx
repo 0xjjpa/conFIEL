@@ -21,6 +21,7 @@ import {
 } from "@chakra-ui/react";
 import { getCookie } from "cookies-next";
 import { useEffect, useState } from "react";
+import { Wallet } from "xrpl";
 import { BANKS } from "../../constants/banks";
 import { ONBOARDING_FLOW } from "../../constants/onboarding";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
@@ -31,10 +32,17 @@ import { Account, BankStorage } from "../../types/BankStorage";
 import { XRPLFaucetBank } from "../../types/XRPLFaucetResponse";
 import { AddressExplorerLink } from "../AddressExplorerLink";
 import { Balance } from "../Balance";
+import { Status } from "../Status";
 import { BankCopyIcon } from "./BankCopyIcon";
 import { BankItem } from "./BankItem";
 
-export const BankView = ({ bankId }: { bankId: string }) => {
+export const BankView = ({
+  bankId,
+  currentWallet,
+}: {
+  bankId: string;
+  currentWallet: Wallet;
+}) => {
   const tableCaption = "Existing registered users and actions.";
   const [bankAddress, setBankAddress] = useState<string>("");
   const [bankItem, setBankItem] = useState<Bank>();
@@ -104,6 +112,8 @@ export const BankView = ({ bankId }: { bankId: string }) => {
     setAccounts(accountsWithCurrentBank);
   }, [bank]);
 
+  console.log("currentWallet", currentWallet);
+
   return (
     <>
       <Flex direction="column">
@@ -137,7 +147,12 @@ export const BankView = ({ bankId }: { bankId: string }) => {
                 const account: Account = bank[accountKey];
                 return (
                   <Tr key={account.address}>
-                    <Td>{titleCase(account.name)}</Td>
+                    <Td>
+                      {currentWallet.classicAddress == account.address && (
+                        <Status isAvailable={true} />
+                      )}
+                      {titleCase(account.name)}
+                    </Td>
                     <Td>
                       <ChakraLink
                         isExternal

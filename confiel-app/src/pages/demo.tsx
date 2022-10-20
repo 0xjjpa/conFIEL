@@ -75,7 +75,7 @@ const Index = () => {
         and payment capabilities. Once issued, users can then exchange goods and
         values given the CBDC agreed value.
       </Text>
-      <BankView bankId={currentBankId} />
+      <BankView bankId={currentBankId} currentWallet={wallet} />
     </>
   );
 
