@@ -11,9 +11,11 @@ import { useEffect } from "react";
 import { CONFIEL_ROLES, DEFAULT_ROLE } from "../constants/roles";
 
 export const NavBar = ({
+  currentBankId,
   currentRole,
   setCurrentRole,
 }: {
+  currentBankId: string;
   currentRole: CONFIEL_ROLES;
   setCurrentRole: (role: CONFIEL_ROLES) => void;
 }) => {
@@ -33,6 +35,7 @@ export const NavBar = ({
               <ButtonGroup variant="link" spacing="8" mt="2">
                 {Object.keys(CONFIEL_ROLES).map((item) => (
                   <Button
+                    disabled={!currentBankId && (CONFIEL_ROLES[item] != CONFIEL_ROLES.CENTRAL_BANK)}
                     style={
                       CONFIEL_ROLES[item] == currentRole
                         ? { textDecoration: "underline" }

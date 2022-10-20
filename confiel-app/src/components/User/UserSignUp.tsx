@@ -14,6 +14,7 @@ export const UserSignUp = ({
   bankId,
   RFC,
   legalName,
+  resetUsers,
   setFIEL,
   setRFC,
   setLegalName,
@@ -22,22 +23,18 @@ export const UserSignUp = ({
   bankId: string;
   RFC: string;
   legalName: string;
+  resetUsers: () => void;
   setFIEL: (fiel: Credential) => void;
   setWallet: (wallet: Wallet) => void;
   setRFC: (rfc: string) => void;
   setLegalName: (legalName: string) => void;
 }) => {
   const [isLoading, setLoading] = useState(false);
-  const [bankItem, setBankItem] = useState<Bank>();
   const router = useRouter()
   const { id } = router?.query;
   const basePath = `${bankId}/0`;
   const derivationPath = id ? `${basePath}/${id}` : basePath;
-  const resetUsers = () => {
-    setFIEL(undefined);
-    setRFC(undefined);
-    setLegalName(undefined);
-  };
+
   const loadMockUser = async (callback: () => void, user = "maria") => {
     const blobPrivateKey = await (
       await fetch(`/mocks/${user}/private.key`)
@@ -69,21 +66,8 @@ export const UserSignUp = ({
     setLoading(false);
   };
 
-  useEffect(() => {
-    const loadBankData = async () => {
-      if (bankId) {
-        const bank = BANKS.find((bank) => bank.id == bankId);
-        setBankItem(bank);
-      }
-    };
-    loadBankData();
-  }, [bankId]);
-
   return (
     <>
-      <Flex alignItems="center">
-        {bankItem && <BankItem bank={bankItem} />}
-      </Flex>
       {!RFC && !legalName && (
         <>
           <Text color="text">

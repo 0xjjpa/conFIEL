@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Credential, SignatureAlgorithm } from "@nodecfdi/credentials";
-import { Link as ChakraLink, Text, Code } from "@chakra-ui/react";
+import { Link as ChakraLink, Text, Code, Flex } from "@chakra-ui/react";
 
 import { Hero } from "../components/Hero";
 import { Container } from "../components/Container";
@@ -20,9 +20,13 @@ import { BankView } from "../components/Bank/BankView";
 import { DEFAULT_XRPL_API_URL } from "../constants/xrpl";
 import { CentralBankView } from "../components/CentralBank/CentralBankView";
 import { getCookie, getCookies } from "cookies-next";
+import { BankItem } from "../components/Bank/BankItem";
+import { BANKS } from "../constants/banks";
+import { Bank } from "../types/Banks";
 
 const Index = () => {
   const [currentRole, setCurrentRole] = useState(undefined);
+  const [bankItem, setBankItem] = useState<Bank>();
   const [xrplClient, setXRPLClient] = useState<Client>(undefined);
   const [FIEL, setFIEL] = useState<Credential>(undefined);
   const [wallet, setWallet] = useState<Wallet>(undefined);
@@ -36,6 +40,22 @@ const Index = () => {
       setCurrentBankId(String(bankId));
     }
   };
+
+  const resetUsers = () => {
+    setFIEL(undefined);
+    setRFC(undefined);
+    setLegalName(undefined);
+  }
+
+  useEffect(() => {
+    const loadBankData = async () => {
+      if (currentBankId) {
+        const bank = BANKS.find((bank) => bank.id == currentBankId);
+        setBankItem(bank);
+      }
+    };
+    loadBankData();
+  }, [currentBankId]);
 
   useEffect(() => {
     const connectToXRP = async () => {
@@ -71,6 +91,7 @@ const Index = () => {
         selectBank={() => {
           setCurrentRole(CONFIEL_ROLES.BANK);
           loadCurrentBankId();
+          resetUsers();
         }}
       />
     </>
@@ -84,6 +105,9 @@ const Index = () => {
         being KYC’ed by the Federal Authority. The FIEL contains a unique id
         known as RFC, and its public certificate has the user’s data.
       </Text>
+      <Flex alignItems="center">
+        {bankItem && <BankItem bank={bankItem} />}
+      </Flex>
       <UserActions
         bankId={currentBankId}
         xrplClient={xrplClient}
@@ -91,6 +115,7 @@ const Index = () => {
         wallet={wallet}
         SignUp={
           <UserSignUp
+            resetUsers={resetUsers}
             bankId={currentBankId}
             RFC={RFC}
             legalName={legalName}
@@ -108,7 +133,7 @@ const Index = () => {
     <Container height="100vh">
       <Hero />
       <Main pb="20">
-        <NavBar currentRole={currentRole} setCurrentRole={setCurrentRole} />
+        <NavBar currentBankId={currentBankId} currentRole={currentRole} setCurrentRole={setCurrentRole} />
         {currentRole == CONFIEL_ROLES.USER && userRole}
         {currentRole == CONFIEL_ROLES.CENTRAL_BANK && centralBankRole}
         {currentRole == CONFIEL_ROLES.BANK && bankRole}
