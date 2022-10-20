@@ -10,6 +10,7 @@ import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { truncate } from "../../lib/helpers";
 import { xrpldGetBalance } from "../../lib/xrpld";
 import { Account, BankStorage } from "../../types/BankStorage";
+import { Balance } from "../Balance";
 
 export const UserAccount = ({
   bankId,
@@ -102,9 +103,10 @@ export const UserAccount = ({
             Wallet <Code>{truncate(wallet.address, 30)}</Code>
           </ChakraLink>
         </Text>
-        <Text>
-          Balance <Code>{Number(balance).toFixed(2)}</Code> XRP
-        </Text>
+        <Flex>
+          <Text mr="2">Balance</Text>
+          <Balance address={wallet.address} />
+        </Flex>
       </Flex>
       {account?.status === ONBOARDING_FLOW.open_account && (
         <Button mt="2" onClick={moveNextStage}>

@@ -115,7 +115,7 @@ export const BankView = ({ bankId }: { bankId: string }) => {
             {isLargerThan1280 ? bankAddress : truncate(bankAddress, 30)}
           </Text>
           <Flex>
-            <Balance address={bankAddress} />
+            <Balance address={bankAddress} hasReload={true} />
             <AddressExplorerLink address={bankAddress} />
           </Flex>
         </Flex>
@@ -156,6 +156,9 @@ export const BankView = ({ bankId }: { bankId: string }) => {
                         >
                           Approve
                         </Button>
+                      )}
+                      {account.status == ONBOARDING_FLOW.account_approved && (
+                        <Balance address={account.address} />
                       )}
                     </Td>
                   </Tr>
