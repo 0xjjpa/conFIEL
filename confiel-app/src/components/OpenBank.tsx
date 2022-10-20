@@ -1,5 +1,6 @@
 import { Button } from "@chakra-ui/react";
 import { useState } from "react";
+import { DEFAULT_TIMEOUT_IN_MS } from "../constants/bank";
 import { Account, BankStorage } from "../types/BankStorage";
 import { CentralBankResponse } from "../types/CentralBankResponse";
 
@@ -26,7 +27,7 @@ export const OpenBank = ({ id, callback }: { id: string, callback: () => void}) 
       setTimeout(() => {
         callback();
         setLoading(false);
-      }, 5000);
+      }, DEFAULT_TIMEOUT_IN_MS);
     } else {
       setLoading(false);
     }

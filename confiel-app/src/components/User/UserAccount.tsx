@@ -23,11 +23,12 @@ export const UserAccount = ({
   name: string;
 }) => {
   const newAccount: Account = {
+    id: bankId,
     status: ONBOARDING_DEFAULT_STAGE,
     address: wallet.address,
     name,
   };
-  const [bank, setBank] = useLocalStorage(`bank-${bankId}`, {
+  const [bank, setBank] = useLocalStorage(`bank`, {
     [wallet.address]: newAccount,
   });
   const [account, setAccount] = useState<Account>();

@@ -1,6 +1,7 @@
 import { ONBOARDING_FLOW } from "../constants/onboarding"
 
 export type Account = {
+  id: string,
   address: string,
   status: ONBOARDING_FLOW,
   name: string

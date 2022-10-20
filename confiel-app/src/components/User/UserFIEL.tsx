@@ -15,13 +15,16 @@ import { useState, useRef } from "react";
 import { shorten } from "../../lib/helpers";
 import { Wallet } from "xrpl";
 import { xrpld } from "../../lib/xrpld";
+import { useRouter } from "next/router";
 
 export const FIELSetup = ({
+  bankId,
   setWallet,
   setFIEL,
   setRFC,
   setLegalName,
 }: {
+  bankId: string;
   setWallet: (wallet: Wallet) => void;
   setFIEL: (fiel: Credential) => void;
   setRFC: (rfc: string) => void;
@@ -72,6 +75,11 @@ export const FIELSetup = ({
     hiddenFileInputCer.current.click();
   };
 
+  const router = useRouter()
+  const { id } = router?.query;
+  const basePath = `${bankId}/0`;
+  const derivationPath = id ? `${basePath}/${id}` : basePath;
+
   const handleXRPGeneration = (callback: () => void) => {
     const fiel = Credential.create(
       String(certificate),
@@ -82,7 +90,7 @@ export const FIELSetup = ({
     setFIEL(fiel);
     setRFC(eFirma.rfc());
     setLegalName(eFirma.legalName());
-    const wallet = xrpld(fiel);
+    const wallet = xrpld(fiel, derivationPath);
     setWallet(wallet);
     callback();
   };

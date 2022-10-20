@@ -42,9 +42,7 @@ export const BankView = ({ bankId }: { bankId: string }) => {
   const [isLargerThan1280] = useMediaQuery("(min-width: 480px)");
   const [accounts, setAccounts] = useState([]);
   const [isLoading, setLoading] = useState(false);
-  const [bank, setBank] = useLocalStorage(`bank-${bankId}`, {});
-
-  console.log("Bank ID", bankId);
+  const [bank, setBank] = useLocalStorage(`bank`, {});
 
   useEffect(() => {
     const loadBankData = async () => {
@@ -85,7 +83,11 @@ export const BankView = ({ bankId }: { bankId: string }) => {
     const { status } = response;
     if (status == "ok") {
       const account: Account = (bank as BankStorage)[address];
-      const updatedAccount = { ...account, status: account.status + 1 };
+      const updatedAccount = {
+        ...account,
+        status: account.status + 1,
+        id: bankId,
+      };
       setBank(Object.assign({}, bank, { [address]: updatedAccount }));
     }
     setLoading(false);
@@ -93,13 +95,21 @@ export const BankView = ({ bankId }: { bankId: string }) => {
 
   useEffect(() => {
     const accounts = bank ? Object.keys(bank) : [];
-    setAccounts(accounts);
+    const accountsWithId = accounts.filter(
+      (accountKey) => !!(bank[accountKey] as Account).id
+    );
+    const accountsWithCurrentBank = accountsWithId.filter(
+      (accountKey) => (bank[accountKey] as Account).id == bankId
+    );
+    setAccounts(accountsWithCurrentBank);
   }, [bank]);
 
   return (
     <>
       <Flex direction="column">
-        <Flex alignItems="center">{bankItem && <BankItem bank={bankItem} />}</Flex>
+        <Flex alignItems="center">
+          {bankItem && <BankItem bank={bankItem} />}
+        </Flex>
         <Flex alignItems="center" justifyContent="space-between">
           <Text fontWeight={900} fontFamily="mono">
             {isLargerThan1280 ? bankAddress : truncate(bankAddress, 30)}
@@ -112,7 +122,7 @@ export const BankView = ({ bankId }: { bankId: string }) => {
       </Flex>
 
       <TableContainer>
-        <Table variant="simple" size='sm'>
+        <Table variant="simple" size="sm">
           <TableCaption>{tableCaption}</TableCaption>
           <Thead>
             <Tr>

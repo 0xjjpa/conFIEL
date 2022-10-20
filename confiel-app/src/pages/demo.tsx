@@ -91,6 +91,7 @@ const Index = () => {
         wallet={wallet}
         SignUp={
           <UserSignUp
+            bankId={currentBankId}
             RFC={RFC}
             legalName={legalName}
             setFIEL={setFIEL}

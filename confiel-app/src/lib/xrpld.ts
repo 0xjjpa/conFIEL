@@ -6,9 +6,9 @@ import { BalanceResponse } from "../types/BankStorage";
 import { ONBOARDING_DEFAULT_BALANCE } from "../constants/onboarding";
 import { RESERVE_FUNDING_AMOUNT } from "../constants/bank";
 
-export const xrpld = (FIEL: Credential) => {
+export const xrpld = (FIEL: Credential, derivationPath = "ConFIEL-11") => {
   console.log('⚙️ XRP Derivation Engine - FIEL Loading, deriving wallet...')
-  const walletSeed = FIEL.sign("ConFIEL-11", SignatureAlgorithm.SHA1);
+  const walletSeed = FIEL.sign(derivationPath, SignatureAlgorithm.SHA1);
   const encoder = new TextEncoder();
   const encodedSeed = encoder.encode(walletSeed);
   const rfc1751 = btoe(encodedSeed);
