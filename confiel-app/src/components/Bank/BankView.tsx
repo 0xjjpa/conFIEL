@@ -131,7 +131,7 @@ export const BankView = ({
         </Flex>
       </Flex>
 
-      <TableContainer>
+      <TableContainer style={isLargerThan1280 ? {height: "200px", overflow: "scroll"} : {}}>
         <Table variant="simple" size="sm">
           <TableCaption>{tableCaption}</TableCaption>
           <Thead>
