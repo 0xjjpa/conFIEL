@@ -34,7 +34,7 @@ const UseCases = () => {
       information about the owners of these wallets can be shared on an e-commerce
       platform, avoiding illegal purchases and reducing fraud.
       `,
-      keywords: ["Fraud", "E-commerce"]
+      keywords: ["Fraud", "E-commerce"],
     },
     {
       sector: "Goverment",
@@ -44,7 +44,7 @@ const UseCases = () => {
       which more often than not reside on remote rural areas. This last mile could be
       bridged by using conFIEL which has a verified identity.
       `,
-      keywords: ["UBI", "Finance"]
+      keywords: ["UBI", "Finance"],
     },
     {
       sector: "SME (PyME)",
@@ -54,49 +54,59 @@ const UseCases = () => {
       a framework to regulate digital contracts. Using conFIEL and XRP Ledger, contracts can
       be created as NFTs with timestamps and metadata.
       `,
-      keywords: ["Legal", "NFTs"]
-    }
+      keywords: ["Legal", "NFTs"],
+    },
   ];
   return (
     <Container height="100vh">
       <Hero />
       <Main>
         <Text color="text" mt={["10", null, "20"]}>
-          <Code>conFIEL</Code> can be used for a number of services and
-          applications not only within the context of gubernamental
-          applications, but also for the private sector. In particular, layers
-          on top of the financial sector could be disrupted while leveraging on{" "}
-          <Code>XRP Ledger</Code>.
+          <Code>conFIEL CBDC</Code> is a retail-CBDC focused on financial
+          inclusion by relying on the XRP Ledger and gubernamental-issued
+          digital certificates which can be used to KYC users within a
+          commercial bank system.
         </Text>
-        <SimpleGrid columns={[1, null, 2]} spacing='2'>
-        {useCases.map((useCase) => (
-          <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden">
-            <Box p="6">
-              <Box display="flex" alignItems="baseline">
-                <Badge borderRadius="full" px="2" colorScheme="teal">
-                  {useCase.sector}
-                </Badge>
-                <Box
-                  color="gray.500"
-                  fontWeight="semibold"
-                  letterSpacing="wide"
-                  fontSize="xs"
-                  textTransform="uppercase"
-                  ml="2"
-                >
-                  {useCase.keywords[0]} &bull; {useCase.keywords[1]}
+        <Text color="text" mt={["10", null, "20"]}>
+          Non-onboarded users can receive payments via escrows using a
+          commercial bank as trustee, which they can claim by using a
+          cryptographic proof which can be shared offline (e.g. via any
+          messaging app).
+        </Text>
+        <SimpleGrid columns={[1, null, 2]} spacing="2">
+          {useCases.map((useCase) => (
+            <Box
+              maxW="sm"
+              borderWidth="1px"
+              borderRadius="lg"
+              overflow="hidden"
+            >
+              <Box p="6">
+                <Box display="flex" alignItems="baseline">
+                  <Badge borderRadius="full" px="2" colorScheme="teal">
+                    {useCase.sector}
+                  </Badge>
+                  <Box
+                    color="gray.500"
+                    fontWeight="semibold"
+                    letterSpacing="wide"
+                    fontSize="xs"
+                    textTransform="uppercase"
+                    ml="2"
+                  >
+                    {useCase.keywords[0]} &bull; {useCase.keywords[1]}
+                  </Box>
+                </Box>
+
+                <Box mt="1" fontWeight="semibold" as="h4" lineHeight="tight">
+                  {useCase.title}
+                </Box>
+                <Box mt="1" as="p" fontSize="sm" lineHeight="tight">
+                  {useCase.description}
                 </Box>
               </Box>
-
-              <Box mt="1" fontWeight="semibold" as="h4" lineHeight="tight">
-                {useCase.title}
-              </Box>
-              <Box mt="1" as="p" fontSize="sm" lineHeight="tight">
-                {useCase.description}
-              </Box>
             </Box>
-          </Box>
-        ))}
+          ))}
         </SimpleGrid>
       </Main>
 
