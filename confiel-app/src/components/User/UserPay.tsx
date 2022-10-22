@@ -12,7 +12,7 @@ import { DEFAULT_FUNDING_AMOUNT } from "../../constants/bank";
 import { XRPL_SUCCESSFUL_TES_CODE } from "../../constants/xrpl";
 import { buildTransaction, isTransactionMetadata } from "../../lib/xrpl";
 
-export const UserTransfer = ({
+export const UserPay = ({
   xrplClient,
   wallet,
 }: {
@@ -55,7 +55,7 @@ export const UserTransfer = ({
           type="text"
           value={addressToTransfer}
           onChange={handleChangeAddress}
-          placeholder="rJrbSWfK...ZsySgZhZev"
+          placeholder="CACX7...101P8"
         />
         <InputRightElement width="4.5rem">
           <Button
