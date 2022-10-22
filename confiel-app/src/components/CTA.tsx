@@ -13,7 +13,7 @@ export const CTA = () => (
   >
     <Button
       as={ChakraLink}
-      href="/use-cases"
+      href="/overview"
       variant="outline"
       colorScheme="green"
       rounded="button"

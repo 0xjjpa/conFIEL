@@ -17,44 +17,45 @@ import { Footer } from "../components/Footer";
 const UseCases = () => {
   const useCases = [
     {
-      sector: "Financial",
-      title: "Automatic tax-settlement",
+      sector: "Users",
+      title: "eFIEL as Onboarding requirement",
       description: `
-      By leveraging on conFIEL, a CBDC that can automatically calculate and deduct
-      the respective tax rates from transactions between individulas and companies
-      can be implemented by analysing the digital transactions.
+      There are almost 30M individual/companies in Mexico with a FIEL,
+      Mexico’s digital certificate issued by the SAT (Tax Revenue Service).
+      conFIEL uses this credential to register them as KYC-ed users against
+      a Commercial Bank.
       `,
-      keywords: ["Taxes", "Banking"],
+      keywords: ["FIEL", "KYC"],
     },
     {
-      sector: "Retail",
-      title: "KYC-ed online purchases",
+      sector: "Accounts",
+      title: "Digital wallets via XRP Ledger",
       description: `
-      Since conFIEL derives a wallet using a central authority certificate, basic
-      information about the owners of these wallets can be shared on an e-commerce
-      platform, avoiding illegal purchases and reducing fraud.
+      conFIEL uses a FIEL’s signature and a UUID to create a fully-functional
+      XRP Ledger-based digital wallet. Accounts are managed using this secure
+      credential, ensuring these wallets comply with FATF’s Travel Rule requirements.
       `,
-      keywords: ["Fraud", "E-commerce"],
+      keywords: ["XRP", "FATF"],
     },
     {
-      sector: "Goverment",
-      title: "UBI Implementation",
+      sector: "Infrastructure",
+      title: "Dashboard, Asset Custody and e-Wallet",
       description: `
-      The Mexican goverment issues a series of subsidies for low-income individuals,
-      which more often than not reside on remote rural areas. This last mile could be
-      bridged by using conFIEL which has a verified identity.
+      The application consists on a Web Dashboard showcasing the issuance of CBDCs,
+      the hosting and manage of a Commercial Bank private key, and the generation
+      of a self-managed wallet.
       `,
-      keywords: ["UBI", "Finance"],
+      keywords: ["Web App", "Custody"],
     },
     {
-      sector: "SME (PyME)",
-      title: "Digitalizing Contracts",
+      sector: "Payments",
+      title: "Online payments or offline escrows",
       description: `
-      Digital signatures on contracts had been recently introduced in Mexico under NOM 151,
-      a framework to regulate digital contracts. Using conFIEL and XRP Ledger, contracts can
-      be created as NFTs with timestamps and metadata.
+      conFIEL registered users can easily send CBDC payments using each other’s
+      wallet address. Users can even send payments to unregistered users via
+      shareable offline escrows.
       `,
-      keywords: ["Legal", "NFTs"],
+      keywords: ["P2P", "Escrow"],
     },
   ];
   return (
@@ -62,20 +63,16 @@ const UseCases = () => {
       <Hero />
       <Main>
         <Text color="text" mt={["10", null, "20"]}>
-          <Code>conFIEL CBDC</Code> is a retail-CBDC focused on financial
-          inclusion by relying on the XRP Ledger and gubernamental-issued
-          digital certificates which can be used to KYC users within a
-          commercial bank system.
+          <Code>conFIEL CBDC</Code> is a Mexico-focused retail-CBDC enhancing financial
+          inclusion using the XRP Ledger and gubernamental-issued digital certificates
+          with enough information to KYC users. Non-onboarded receive payments via escrows using a
+          commercial bank as trustee, and can claim them with a cryptographic proof
+          shared online or offline (e.g. via any messaging app).
         </Text>
-        <Text color="text" mt={["10", null, "20"]}>
-          Non-onboarded users can receive payments via escrows using a
-          commercial bank as trustee, which they can claim by using a
-          cryptographic proof which can be shared offline (e.g. via any
-          messaging app).
-        </Text>
-        <SimpleGrid columns={[1, null, 2]} spacing="2">
+        <SimpleGrid columns={[1, null, 2]} spacing="2" alignSelf="center">
           {useCases.map((useCase) => (
             <Box
+              key={useCase.sector}
               maxW="sm"
               borderWidth="1px"
               borderRadius="lg"
@@ -112,14 +109,14 @@ const UseCases = () => {
 
       <DarkModeSwitch />
       <Footer>
-        <Text>
+        <Text textAlign="center">
           By{" "}
           <ChakraLink isExternal href="https://twitter.com/0xjjpa">
             Jose Aguinaga
           </ChakraLink>
           , a submission to the{" "}
-          <ChakraLink isExternal href="https://ripplecbdc.devpost.com/">
-            Ripple CBDC Innovate
+          <ChakraLink isExternal href="https://ripplecbdc2.devpost.com/">
+            Ripple CBDC Innovate (pt. 2)
           </ChakraLink>{" "}
           hackathon
         </Text>
