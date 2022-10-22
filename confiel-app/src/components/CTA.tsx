@@ -21,7 +21,7 @@ export const CTA = () => (
       mx={2}
       width="full"
     >
-      Use Cases
+      Explanation
     </Button>
     <Button
       as={ChakraLink}

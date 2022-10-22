@@ -20,8 +20,8 @@ const Index = () => (
     <Hero />
     <Main>
       <Text color="text" mt="10">
-        <Code>conFIEL</Code> is a proof-of-concept for building a CBDC on top of <Code>XRP Ledger</Code> in Mexico
-        using <ChakraLink isExternal href="https://www.sat.gob.mx/home">SAT</ChakraLink> (Mexican IRS) digital
+        <Code>conFIEL CBDC</Code> is a proof-of-concept for building a retail-CBDC on top of <Code>XRP Ledger</Code> for Mexico’s
+        Central Bank (Banxico) using <ChakraLink isExternal href="https://www.sat.gob.mx/home">SAT</ChakraLink> (Mexican IRS) digital
         signatures called <Code>FIEL</Code> (or e.Firma).
       </Text>
       
@@ -41,6 +41,10 @@ const Index = () => (
         <ListItem>
           <ListIcon as={CheckCircleIcon} color="green.500" />
             Transfers are both client and server-side using <Code>xrpl.js</Code> and <Code>Next.js</Code> API endpoints.
+        </ListItem>
+        <ListItem>
+          <ListIcon as={CheckCircleIcon} color="green.500" />
+            Users can online P2P transfers + offline P2P escrows via on Commercial Bank accounts.
         </ListItem>
       </List>
     </Main>
