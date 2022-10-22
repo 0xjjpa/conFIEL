@@ -42,8 +42,8 @@ const UseCases = () => {
       title: "Dashboard, Asset Custody and e-Wallet",
       description: `
       The application consists on a Web Dashboard showcasing the issuance of CBDCs,
-      the hosting and manage of a Commercial Bank private key, and the generation
-      of a self-managed wallet.
+      the hosting of a server to manage a Commercial Bank assets, and a self-managed
+      XRP wallet.
       `,
       keywords: ["Web App", "Custody"],
     },

@@ -83,7 +83,7 @@ const Index = () => {
     <>
       <Text>
         Banxico is Mexico’s central bank, which manages the currency and
-        monetary policy of a country. Banxico can issue new digital currencies
+        monetary policy of the country. Banxico can issue new digital currencies
         (CBDC) which can then be used by Commercial Banks for multiple
         retail-based use cases to increase adoption in the financial sector.
       </Text>

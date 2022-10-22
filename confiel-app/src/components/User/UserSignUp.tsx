@@ -71,7 +71,7 @@ export const UserSignUp = ({
       {!RFC && !legalName && (
         <>
           <Text color="text">
-            To get started, pre-load one of our users into the system.
+            To get started, pre-load one of our users into the current bank system.
           </Text>
           <ButtonGroup>
             <Button
