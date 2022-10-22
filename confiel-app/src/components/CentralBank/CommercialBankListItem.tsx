@@ -49,9 +49,10 @@ export const CommercialBankListItem = ({
         borderRadius: "5",
         cursor: "pointer"
       }}
+      onClick={() => bank && selectBankId(id)}
     >
       <Flex alignItems="center" justifyContent="space-between">
-        <Flex alignItems="center" onClick={() => bank && selectBankId(id)}>
+        <Flex alignItems="center">
           <Status isAvailable={!!bank} />
           <BankItem bank={{ id, name, longName, icon }} />
         </Flex>

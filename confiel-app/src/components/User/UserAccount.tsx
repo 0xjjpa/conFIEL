@@ -11,6 +11,7 @@ import { truncate } from "../../lib/helpers";
 import { xrpldGetBalance } from "../../lib/xrpld";
 import { Account, BankStorage } from "../../types/BankStorage";
 import { Balance } from "../Balance";
+import { Status } from "../Status";
 
 export const UserAccount = ({
   bankId,
@@ -86,13 +87,15 @@ export const UserAccount = ({
     setAccount(updatedAccount);
     setBank(Object.assign({}, bank, { [wallet.address]: updatedAccount }));
   };
+  const isActive = account?.status == ONBOARDING_FLOW.account_approved
   return (
     <>
-      <Flex direction="column">
+      <Flex direction="row" justifyContent="space-between">
         <Text>
           Status{" "}
           <Code>
-            {balance == ONBOARDING_DEFAULT_BALANCE ? "Inactive" : "Active"}
+            <Status isAvailable={isActive}/>
+            {isActive ? "Active" : "Inactive"}
           </Code>
         </Text>
         <Text>
@@ -100,7 +103,7 @@ export const UserAccount = ({
             isExternal
             href={`https://testnet.xrpl.org/accounts/${wallet.address}`}
           >
-            Wallet <Code>{truncate(wallet.address, 30)}</Code>
+            Address <Code>{truncate(wallet.address, 30)}</Code>
           </ChakraLink>
         </Text>
         <Flex>
