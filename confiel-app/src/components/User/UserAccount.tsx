@@ -12,6 +12,7 @@ import { xrpldGetBalance } from "../../lib/xrpld";
 import { Account, BankStorage } from "../../types/BankStorage";
 import { Balance } from "../Balance";
 import { Status } from "../Status";
+import { UserTransactions } from "./UserTransactions";
 
 export const UserAccount = ({
   bankId,
@@ -121,6 +122,7 @@ export const UserAccount = ({
           Please wait while the bank approves your account.
         </Text>
       )}
+      <UserTransactions />
     </>
   );
 };
