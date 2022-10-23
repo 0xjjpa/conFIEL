@@ -63,11 +63,9 @@ const UseCases = () => {
       <Hero />
       <Main>
         <Text color="text" mt={["10", null, "20"]}>
-          <Code>conFIEL CBDC</Code> is a Mexico-focused retail-CBDC enhancing financial
-          inclusion using the XRP Ledger and gubernamental-issued digital certificates
-          with enough information to KYC users. Non-onboarded receive payments via escrows using a
-          commercial bank as trustee, and can claim them with a cryptographic proof
-          shared online or offline (e.g. via any messaging app).
+          <Code>conFIEL CBDC</Code> has been developed as a full end-to-end application
+          to be used by Mexico’s Central Bank to issue and control CBDCs for banks and
+          users alike.
         </Text>
         <SimpleGrid columns={[1, null, 2]} spacing="2" alignSelf="center">
           {useCases.map((useCase) => (

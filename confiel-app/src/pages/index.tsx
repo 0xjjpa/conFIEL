@@ -37,13 +37,13 @@ const Index = () => (
         </ListItem>
         <ListItem>
           <ListIcon as={CheckCircleIcon} color="green.500" />
-          Accounts are <Code>XRP</Code> wallets derived from a FIEL{" "}
+          Accounts are <Code>XRP</Code> wallets derived by a FIEL{" "}
           <Code>
             <ChakraLink
               isExternal
               href="https://www.scielo.org.mx/pdf/cys/v23n2/1405-5546-cys-23-02-477.pdf"
             >
-              RSA-2048
+              RSA
             </ChakraLink>
           </Code>{" "}
           signature as a{" "}
@@ -60,10 +60,10 @@ const Index = () => (
 
         <ListItem>
           <ListIcon as={CheckCircleIcon} color="green.500" />
-          Infrastructure includes both a web-client and server using <Code>
+          Infrastructure includes both a web-client and a server using <Code>
             xrpl.js
           </Code>{" "}
-          and <Code>Next.js</Code> API endpoints.
+          and <Code>Next.js</Code> APIs.
         </ListItem>
         <ListItem>
           <ListIcon as={CheckCircleIcon} color="green.500" />

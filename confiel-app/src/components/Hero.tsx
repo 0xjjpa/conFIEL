@@ -5,6 +5,7 @@ export const Hero = ({ title }: { title: string }) => (
     justifyContent="center"
     alignItems="center"
     height="100vh"
+    my="10"
     marginTop="1rem"
     bgGradient="linear(to-l, heroGradientStart, heroGradientEnd)"
     bgClip="text"
