@@ -10,6 +10,7 @@ import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { truncate } from "../../lib/helpers";
 import { xrpldGetBalance } from "../../lib/xrpld";
 import { Account, BankStorage } from "../../types/BankStorage";
+import { Transaction } from "../../types/TransactionsStorage";
 import { Balance } from "../Balance";
 import { Status } from "../Status";
 import { UserTransactions } from "./UserTransactions";
@@ -34,8 +35,20 @@ export const UserAccount = ({
   const [bank, setBank] = useLocalStorage(`bank`, {
     [wallet.address]: newAccount,
   });
+  const [transactions] = useLocalStorage(`transactions`, {});
+  const [userTransactions, setUserTransactions] = useState<Transaction[]>();
   const [account, setAccount] = useState<Account>();
   const [balance, setBalance] = useState<string>("");
+
+  useEffect(() => {
+    const allTransactions = Object.keys(transactions).map(transactionKey => {
+      const transaction: Transaction = transactions[transactionKey];
+      return transaction;
+    })
+    console.log("Transactions", allTransactions, account);
+    const userTransactions = allTransactions.filter(txs => txs.to === wallet?.address || txs.from === wallet?.address);
+    setUserTransactions(userTransactions);
+  }, [transactions])
 
   useEffect(() => {
     const loadBalance = async () => {
@@ -122,7 +135,7 @@ export const UserAccount = ({
           Please wait while the bank approves your account.
         </Text>
       )}
-      <UserTransactions />
+      {account?.status === ONBOARDING_FLOW.account_approved && <UserTransactions transactions={userTransactions}/>}
     </>
   );
 };

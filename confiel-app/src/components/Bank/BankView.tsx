@@ -24,11 +24,13 @@ import { useEffect, useState } from "react";
 import { Wallet } from "xrpl";
 import { BANKS } from "../../constants/banks";
 import { ONBOARDING_FLOW } from "../../constants/onboarding";
+import { TRANSACTIONS_TYPE } from "../../constants/transactions";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { titleCase, truncate } from "../../lib/helpers";
 import { BankResponse } from "../../types/BankResponse";
 import { Bank } from "../../types/Banks";
 import { Account, BankStorage } from "../../types/BankStorage";
+import { Transaction } from "../../types/TransactionsStorage";
 import { XRPLFaucetBank } from "../../types/XRPLFaucetResponse";
 import { AddressExplorerLink } from "../AddressExplorerLink";
 import { Balance } from "../Balance";
@@ -51,6 +53,7 @@ export const BankView = ({
   const [accounts, setAccounts] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [bank, setBank] = useLocalStorage(`bank`, {});
+  const [transactions, setTransactions] = useLocalStorage(`transactions`, {});
 
   useEffect(() => {
     const loadBankData = async () => {
@@ -97,6 +100,17 @@ export const BankView = ({
         id: bankId,
       };
       setBank(Object.assign({}, bank, { [address]: updatedAccount }));
+      const newTransaction: Transaction = {
+        from: bankAddress,
+        to: address,
+        hash: response.txHash,
+        type: TRANSACTIONS_TYPE.deposit,
+      };
+      setTransactions(
+        Object.assign({}, transactions, {
+          [`${bankAddress}-${address}`]: newTransaction,
+        })
+      );
     }
     setLoading(false);
   };
@@ -131,7 +145,9 @@ export const BankView = ({
         </Flex>
       </Flex>
 
-      <TableContainer style={isLargerThan1280 ? {height: "200px", overflow: "scroll"} : {}}>
+      <TableContainer
+        style={isLargerThan1280 ? { height: "200px", overflow: "scroll" } : {}}
+      >
         <Table variant="simple" size="sm">
           <TableCaption>{tableCaption}</TableCaption>
           <Thead>

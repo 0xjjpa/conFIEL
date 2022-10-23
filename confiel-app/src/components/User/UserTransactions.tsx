@@ -26,10 +26,9 @@ import { Transaction } from "../../types/TransactionsStorage";
 import { Balance } from "../Balance";
 import { BankCopyIcon } from "../Bank/BankCopyIcon";
 
-export const UserTransactions = () => {
+export const UserTransactions = ({ transactions }: { transactions: Transaction[]}) => {
   const tableCaption = "Bank and user transactions.";
   const [isLargerThan1280] = useMediaQuery("(min-width: 480px)");
-  const [transactions] = useLocalStorage(`transactions`, {});
   return (
     <Box mt="5">
       <Text fontWeight="bold">Transactions</Text>
@@ -47,8 +46,7 @@ export const UserTransactions = () => {
           </Thead>
           <Tbody>
             {transactions.length > 0 ? (
-              transactions.map((accountKey) => {
-                const tx: Transaction = transactions[accountKey];
+              transactions.map((tx) => {
                 return (
                   <Tr key={tx.hash}>
                     <Td>
