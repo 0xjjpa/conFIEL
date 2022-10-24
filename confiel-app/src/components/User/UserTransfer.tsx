@@ -9,8 +9,11 @@ import {
 import { useState } from "react";
 import { Client, Wallet } from "xrpl";
 import { DEFAULT_FUNDING_AMOUNT } from "../../constants/bank";
+import { TRANSACTIONS_TYPE } from "../../constants/transactions";
 import { XRPL_SUCCESSFUL_TES_CODE } from "../../constants/xrpl";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { buildTransaction, isTransactionMetadata } from "../../lib/xrpl";
+import { Transaction, TransactionsStorage } from "../../types/TransactionsStorage";
 
 export const UserTransfer = ({
   xrplClient,
@@ -24,6 +27,7 @@ export const UserTransfer = ({
   const [isSuccessful, setSuccessful] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const handleChangeAddress = (e) => setAddressToTransfer(e.target.value);
+  const [transactions, setTransactions] = useLocalStorage(`transactions`, {});
 
   const transferXRP = async () => {
     setLoading(true);
@@ -43,6 +47,20 @@ export const UserTransfer = ({
       tx.result.meta.TransactionResult == XRPL_SUCCESSFUL_TES_CODE
       setSuccessful(true);
     }
+    const transactionId = `${wallet.address}-${addressToTransfer}`
+    const existingTransactions: Transaction[] = (transactions as TransactionsStorage)[transactionId] || [];
+    const newTransaction: Transaction = {
+      from: wallet.address,
+      to: addressToTransfer,
+      hash: tx.result.hash,
+      type: TRANSACTIONS_TYPE.transfer,
+    };
+    existingTransactions.push(newTransaction)
+    setTransactions(
+      Object.assign({}, transactions, {
+        [transactionId]: existingTransactions,
+      })
+    );
     setTransferTx(tx.result.hash);
     setLoading(false);
   };

@@ -10,7 +10,10 @@ import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { truncate } from "../../lib/helpers";
 import { xrpldGetBalance } from "../../lib/xrpld";
 import { Account, BankStorage } from "../../types/BankStorage";
-import { Transaction } from "../../types/TransactionsStorage";
+import {
+  Transaction,
+  TransactionsStorage,
+} from "../../types/TransactionsStorage";
 import { Balance } from "../Balance";
 import { Status } from "../Status";
 import { UserTransactions } from "./UserTransactions";
@@ -40,15 +43,26 @@ export const UserAccount = ({
   const [account, setAccount] = useState<Account>();
   const [balance, setBalance] = useState<string>("");
 
+  const loadTransactions = (transactions) => {
+    const filteredTransactions = Object.keys(transactions).reduce(
+      (txList, transactionKey) => {
+        const transactionsPerKey: Transaction[] = (
+          transactions as TransactionsStorage
+        )[transactionKey];
+        const userTransactions = transactionsPerKey.filter(
+          (txs) => txs.to === wallet?.address || txs.from === wallet?.address
+        );
+        return txList.concat(userTransactions);
+      },
+      [] as Transaction[]
+    );
+    console.log("Transactions", filteredTransactions, account);
+    setUserTransactions(filteredTransactions);
+  };
+
   useEffect(() => {
-    const allTransactions = Object.keys(transactions).map(transactionKey => {
-      const transaction: Transaction = transactions[transactionKey];
-      return transaction;
-    })
-    console.log("Transactions", allTransactions, account);
-    const userTransactions = allTransactions.filter(txs => txs.to === wallet?.address || txs.from === wallet?.address);
-    setUserTransactions(userTransactions);
-  }, [transactions])
+    loadTransactions(transactions);
+  }, [transactions]);
 
   useEffect(() => {
     const loadBalance = async () => {
@@ -101,14 +115,14 @@ export const UserAccount = ({
     setAccount(updatedAccount);
     setBank(Object.assign({}, bank, { [wallet.address]: updatedAccount }));
   };
-  const isActive = account?.status == ONBOARDING_FLOW.account_approved
+  const isActive = account?.status == ONBOARDING_FLOW.account_approved;
   return (
     <>
       <Flex direction="row" justifyContent="space-between">
         <Text>
           Status{" "}
           <Code>
-            <Status isAvailable={isActive}/>
+            <Status isAvailable={isActive} />
             {isActive ? "Active" : "Inactive"}
           </Code>
         </Text>
@@ -135,7 +149,12 @@ export const UserAccount = ({
           Please wait while the bank approves your account.
         </Text>
       )}
-      {account?.status === ONBOARDING_FLOW.account_approved && <UserTransactions transactions={userTransactions}/>}
+      {account?.status === ONBOARDING_FLOW.account_approved && (
+        <UserTransactions
+          reloadTransactions={() => loadTransactions(transactions)}
+          transactions={userTransactions}
+        />
+      )}
     </>
   );
 };

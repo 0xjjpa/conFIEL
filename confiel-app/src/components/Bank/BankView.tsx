@@ -30,7 +30,7 @@ import { titleCase, truncate } from "../../lib/helpers";
 import { BankResponse } from "../../types/BankResponse";
 import { Bank } from "../../types/Banks";
 import { Account, BankStorage } from "../../types/BankStorage";
-import { Transaction } from "../../types/TransactionsStorage";
+import { Transaction, TransactionsStorage } from "../../types/TransactionsStorage";
 import { XRPLFaucetBank } from "../../types/XRPLFaucetResponse";
 import { AddressExplorerLink } from "../AddressExplorerLink";
 import { Balance } from "../Balance";
@@ -100,15 +100,18 @@ export const BankView = ({
         id: bankId,
       };
       setBank(Object.assign({}, bank, { [address]: updatedAccount }));
+      const transactionId = `${bankAddress}-${address}`
+      const existingTransactions: Transaction[] = (transactions as TransactionsStorage)[transactionId] || [];
       const newTransaction: Transaction = {
         from: bankAddress,
         to: address,
         hash: response.txHash,
         type: TRANSACTIONS_TYPE.deposit,
       };
+      existingTransactions.push(newTransaction)
       setTransactions(
         Object.assign({}, transactions, {
-          [`${bankAddress}-${address}`]: newTransaction,
+          [`${bankAddress}-${address}`]: existingTransactions,
         })
       );
     }

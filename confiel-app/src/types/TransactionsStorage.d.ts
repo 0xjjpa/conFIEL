@@ -7,5 +7,5 @@ export type Transaction = {
   type: TRANSACTIONS_TYPE
 }
 export type TransactionsStorage = {
-  [key: transaction]: Transaction
+  [key: transaction]: Transaction[]
 }
