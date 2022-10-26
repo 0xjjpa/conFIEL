@@ -62,7 +62,7 @@ export const UserActions = ({
           <Box mb="3">
             <Text fontWeight="bold">Pay</Text>
             <Text fontSize="sm">Send anybody with an RFC 0.05 to their balance.</Text>
-            <UserPay xrplClient={xrplClient} wallet={wallet} />
+            <UserPay bankId={bankId} xrplClient={xrplClient} wallet={wallet} />
           </Box>
         </TabPanel>
       </TabPanels>

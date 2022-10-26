@@ -6,46 +6,93 @@ import {
   Text,
   Link as ChakraLink,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { getCookie } from "cookies-next";
+import { useEffect, useState } from "react";
 import { Client, Wallet } from "xrpl";
 import { DEFAULT_FUNDING_AMOUNT } from "../../constants/bank";
+import { TRANSACTIONS_TYPE } from "../../constants/transactions";
 import { XRPL_SUCCESSFUL_TES_CODE } from "../../constants/xrpl";
-import { buildTransaction, isTransactionMetadata } from "../../lib/xrpl";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { generatePreimage } from "../../lib/preimage";
+import { buildEscrowCreate, includeCondition, includeDestinationTag, isTransactionMetadata } from "../../lib/xrpl";
+import { Transaction, TransactionsStorage } from "../../types/TransactionsStorage";
+import { XRPLFaucetBank } from "../../types/XRPLFaucetResponse";
 
 export const UserPay = ({
+  bankId,
   xrplClient,
   wallet,
 }: {
+  bankId: string;
   xrplClient: Client;
   wallet: Wallet;
 }) => {
   const [addressToTransfer, setAddressToTransfer] = useState("");
   const [transferTx, setTransferTx] = useState("");
+  const [bankAddress, setBankAddress] = useState<string>("");
   const [isSuccessful, setSuccessful] = useState(false);
   const [isLoading, setLoading] = useState(false);
+  const [transactions, setTransactions] = useLocalStorage(`transactions`, {});
   const handleChangeAddress = (e) => setAddressToTransfer(e.target.value);
 
-  const transferXRP = async () => {
+  const escrowXRP = async () => {
     setLoading(true);
-    console.log(`👤 User Module Found - Started transfer from ${wallet.address} to ${addressToTransfer}`);
+    console.log(`👤 User Module Found - Started escrow from ${wallet.address} to ${addressToTransfer} via ${bankAddress}`);
+
+    const CLOSE_TIME: number = (
+      await xrplClient.request({
+        command: 'ledger',
+        ledger_index: 'validated',
+      })
+    ).result.ledger.close_time
+  
+    const FIVE_MINUTES = 300
+
+    // Shoutout fulfillment
+    const { condition, fulfillment } = generatePreimage();
+
     const prepared = await xrplClient.autofill(
-      buildTransaction(
+      includeDestinationTag(includeCondition(buildEscrowCreate(
         wallet.address,
-        `${addressToTransfer}`,
-        `${DEFAULT_FUNDING_AMOUNT/100}`
-      )
-    );
+        bankAddress,
+        `${DEFAULT_FUNDING_AMOUNT/100}`,
+        CLOSE_TIME + FIVE_MINUTES,
+      ), condition), 10) // @TODO: Replace "10" for an actual DT
+    )
 
     const signed = wallet.sign(prepared);
     const tx = await xrplClient.submitAndWait(signed.tx_blob);
-    console.log(`👤 User Module Found - Completed`, tx);
+    console.log(`👤 User Module Found - Completed escrow`, tx);
     if (isTransactionMetadata(tx.result.meta)) {
       tx.result.meta.TransactionResult == XRPL_SUCCESSFUL_TES_CODE
       setSuccessful(true);
     }
+    const transactionId = `${wallet.address}-${bankAddress}`
+    const existingTransactions: Transaction[] = (transactions as TransactionsStorage)[transactionId] || [];
+    const newTransaction: Transaction = {
+      from: wallet.address,
+      to: bankAddress,
+      hash: tx.result.hash,
+      type: TRANSACTIONS_TYPE.transfer,
+    };
+    existingTransactions.push(newTransaction)
+    setTransactions(
+      Object.assign({}, transactions, {
+        [transactionId]: existingTransactions,
+      })
+    );
     setTransferTx(tx.result.hash);
     setLoading(false);
   };
+
+  useEffect(() => {
+    const uuid = `bank-${bankId}`;
+    const cachedBank = getCookie(uuid);
+    if (cachedBank) {
+      const bankAccount: XRPLFaucetBank = JSON.parse(String(cachedBank));
+      setBankAddress(bankAccount.account.address);
+    }
+  }, [bankId]);
 
   return (
     <>
@@ -63,7 +110,7 @@ export const UserPay = ({
             disabled={!(addressToTransfer.length > 0)}
             isLoading={isLoading}
             size="sm"
-            onClick={() => transferXRP()}
+            onClick={() => escrowXRP()}
           >
             Enter
           </Button>
