@@ -86,7 +86,7 @@ export const UserPayments = ({
             <Table variant="simple" size="sm">
               <Thead>
                 <Tr>
-                  <Th>From</Th>
+                  <Th>{paymentsTable.label == "Incoming" ? "From" : "To"}</Th>
                   <Th>Amount</Th>
                 </Tr>
               </Thead>
@@ -96,7 +96,7 @@ export const UserPayments = ({
                     return (
                       <Tr key={payment.id}>
                         <Td>
-                          <Code>{payment.from}</Code>
+                          <Code>{paymentsTable.label == "Incoming" ? payment.from : payment.rfc }</Code>
                         </Td>
                         <Td>
                           <Code>{payment.value}</Code>

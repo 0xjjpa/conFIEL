@@ -35,13 +35,11 @@ export const UserActions = ({
   return (
     <Tabs>
       <TabList>
-        <Tab>Sign Up</Tab>
+        <Tab>Access</Tab>
         {FIEL && <Tab>Account</Tab>}
+        {FIEL && <Tab>Payments</Tab>}
         {FIEL && account?.status == ONBOARDING_FLOW.account_approved && (
           <Tab>Actions</Tab>
-        )}
-        {FIEL && account?.status == ONBOARDING_FLOW.account_approved && (
-          <Tab>Payments</Tab>
         )}
       </TabList>
 
@@ -58,19 +56,23 @@ export const UserActions = ({
           )}
         </TabPanel>
         <TabPanel>
+          <UserPayments rfc={FIEL?.rfc()} address={wallet?.address} />
+        </TabPanel>
+        <TabPanel>
           <Box mb="3">
             <Text fontWeight="bold">Transfer</Text>
-            <Text fontSize="sm">Send an already existing user 0.05 to their balance.</Text>
+            <Text fontSize="sm">
+              Send an already existing user 0.05 to their balance.
+            </Text>
             <UserTransfer xrplClient={xrplClient} wallet={wallet} />
           </Box>
           <Box mb="3">
             <Text fontWeight="bold">Pay</Text>
-            <Text fontSize="sm">Send anybody with an RFC 0.05 to their balance.</Text>
+            <Text fontSize="sm">
+              Send anybody with an RFC 0.05 to their balance.
+            </Text>
             <UserPay bankId={bankId} xrplClient={xrplClient} wallet={wallet} />
           </Box>
-        </TabPanel>
-        <TabPanel>
-        <UserPayments rfc={FIEL?.rfc()} address={wallet?.address} />
         </TabPanel>
       </TabPanels>
     </Tabs>

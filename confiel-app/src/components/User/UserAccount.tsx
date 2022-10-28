@@ -127,16 +127,22 @@ export const UserAccount = ({
           </Code>
         </Text>
         <Text>
-          <ChakraLink
-            isExternal
-            href={`https://testnet.xrpl.org/accounts/${wallet.address}`}
-          >
-            Address <Code>{truncate(wallet.address, 30)}</Code>
-          </ChakraLink>
+          {account?.status === ONBOARDING_FLOW.account_approved && (
+            <ChakraLink
+              isExternal
+              href={`https://testnet.xrpl.org/accounts/${wallet.address}`}
+            >
+              Address <Code>{truncate(wallet.address, 30)}</Code>
+            </ChakraLink>
+          )}
         </Text>
         <Flex>
-          <Text mr="2">Balance</Text>
-          <Balance address={wallet.address} />
+          {account?.status === ONBOARDING_FLOW.account_approved && (
+            <>
+              <Text mr="2">Balance</Text>
+              <Balance address={wallet.address} />
+            </>
+          )}
         </Flex>
       </Flex>
       {account?.status === ONBOARDING_FLOW.open_account && (
