@@ -21,6 +21,7 @@ import {
   includeDestinationTag,
   isTransactionMetadata,
 } from "../../lib/xrpl";
+import { Escrow, Payment } from "../../types/EscrowsStorage";
 import {
   Transaction,
   TransactionsStorage,
@@ -43,6 +44,7 @@ export const UserPay = ({
   const [isSuccessful, setSuccessful] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [transactions, setTransactions] = useLocalStorage(`transactions`, {});
+  const [escrows, setEscrows] = useLocalStorage(`escrows`, {});
   const handleChangeAddress = (e) => setAddressToTransfer(e.target.value);
 
   const escrowXRP = async () => {
@@ -65,6 +67,8 @@ export const UserPay = ({
     console.log(
       `👤 User Module Found - Fulfillment for escrow is ${fulfillment}`
     );
+    
+    const destinationTag = crypto.getRandomValues(new Uint32Array(1))[0];
 
     const prepared = await xrplClient.autofill(
       includeDestinationTag(
@@ -77,8 +81,8 @@ export const UserPay = ({
           ),
           condition
         ),
-        10
-      ) // @TODO: Replace "10" for an actual DT
+        destinationTag
+      )
     );
 
     const signed = wallet.sign(prepared);
@@ -87,6 +91,19 @@ export const UserPay = ({
     if (isTransactionMetadata(tx.result.meta)) {
       tx.result.meta.TransactionResult == XRPL_SUCCESSFUL_TES_CODE;
       setSuccessful(true);
+      const newPayment: Payment = {
+        id: tx.result.hash,
+        from: wallet.address,
+        to: bankAddress,
+        value: `${DEFAULT_FUNDING_AMOUNT / 100}`,
+        offerSequence: tx.result.Sequence,
+        rfc: addressToTransfer
+      }
+      const newEscrow: Escrow = {
+        destinationTag,
+        payment: newPayment
+      }
+      setEscrows(Object.assign({}, escrows, { [fulfillment]: newEscrow }));
     }
     const transactionId = `${wallet.address}-${bankAddress}`;
     const existingTransactions: Transaction[] =
@@ -150,7 +167,7 @@ export const UserPay = ({
               See Payment
             </ChakraLink>
           </Text>
-          <Text fontWeight="bold">Payment code - {escrowFulfillment}</Text>
+          {/* <Text fontWeight="bold">Payment code - {escrowFulfillment}</Text> */}
         </Box>
       )}
     </>

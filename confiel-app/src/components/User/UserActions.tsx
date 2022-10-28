@@ -14,6 +14,7 @@ import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { Account, BankStorage } from "../../types/BankStorage";
 import { UserAccount } from "./UserAccount";
 import { UserPay } from "./UserPay";
+import { UserPayments } from "./UserPayments";
 import { UserTransfer } from "./UserTransfer";
 
 export const UserActions = ({
@@ -38,6 +39,9 @@ export const UserActions = ({
         {FIEL && <Tab>Account</Tab>}
         {FIEL && account?.status == ONBOARDING_FLOW.account_approved && (
           <Tab>Actions</Tab>
+        )}
+        {FIEL && account?.status == ONBOARDING_FLOW.account_approved && (
+          <Tab>Payments</Tab>
         )}
       </TabList>
 
@@ -64,6 +68,9 @@ export const UserActions = ({
             <Text fontSize="sm">Send anybody with an RFC 0.05 to their balance.</Text>
             <UserPay bankId={bankId} xrplClient={xrplClient} wallet={wallet} />
           </Box>
+        </TabPanel>
+        <TabPanel>
+        <UserPayments rfc={FIEL?.rfc()} address={wallet?.address} />
         </TabPanel>
       </TabPanels>
     </Tabs>
