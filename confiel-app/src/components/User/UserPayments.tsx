@@ -14,8 +14,10 @@ import {
   Thead,
   Tr,
   useMediaQuery,
+  Button,
 } from "@chakra-ui/react";
 import { Fragment, useEffect, useState } from "react";
+import { dropsToXrp } from "xrpl";
 import { TRANSACTIONS_TYPE } from "../../constants/transactions";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { truncate, titleCase } from "../../lib/helpers";
@@ -23,9 +25,18 @@ import { Escrow, EscrowStorage, Payment } from "../../types/EscrowsStorage";
 import { BankCopyIcon } from "../Bank/BankCopyIcon";
 
 export const UserPayments = ({
+  claimPayment,
+  cancelPayment,
   rfc,
   address,
 }: {
+  claimPayment: (
+    from: string,
+    offerSequence: number,
+    condition: string,
+    fulfillment: string
+  ) => void;
+  cancelPayment: (offerSequence: number) => void;
   rfc: string;
   address?: string;
 }) => {
@@ -33,18 +44,34 @@ export const UserPayments = ({
   const [incomingPayments, setIncomingPayments] = useState<Payment[]>();
   const [outgoingPayments, setOutgoingPayments] = useState<Payment[]>();
   const [isLargerThan1280] = useMediaQuery("(min-width: 480px)");
+  const [isLoadingCancel, setLoadingCancel] = useState(false);
+  const [isLoadingClaim, setLoadingClaim] = useState(false);
+
+  const submitPaymentCancel = async (offerSequence: number) => {
+    console.log("Loading Cancel...");
+    setLoadingCancel(true);
+    await cancelPayment(offerSequence);
+    setLoadingCancel(false);
+  };
+
+  const submitPaymentClaim = async (
+    from: string,
+    to: string,
+    offerSequence: number,
+    condition: string,
+    fulfillmet: string
+  ) => {
+    console.log("Loading Claim...");
+    setLoadingClaim(true);
+    await claimPayment(from, offerSequence, condition, fulfillmet);
+    setLoadingClaim(false);
+  };
 
   useEffect(() => {
     const { incomingPayments, outgoingPayments } = Object.keys(
       escrows as EscrowStorage
     ).reduce(
-      (
-        {
-          incomingPayments,
-          outgoingPayments,
-        },
-        escrowKey
-      ) => {
+      ({ incomingPayments, outgoingPayments }, escrowKey) => {
         const escrow: Escrow = escrows[escrowKey];
         const { payment } = escrow;
         console.log("PAYMENT", address);
@@ -88,6 +115,7 @@ export const UserPayments = ({
                 <Tr>
                   <Th>{paymentsTable.label == "Incoming" ? "From" : "To"}</Th>
                   <Th>Amount</Th>
+                  <Th>Actions</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -96,10 +124,43 @@ export const UserPayments = ({
                     return (
                       <Tr key={payment.id}>
                         <Td>
-                          <Code>{paymentsTable.label == "Incoming" ? payment.from : payment.rfc }</Code>
+                          <Code>
+                            {paymentsTable.label == "Incoming"
+                              ? payment.from
+                              : payment.rfc}
+                          </Code>
                         </Td>
                         <Td>
-                          <Code>{payment.value}</Code>
+                          <Code>{dropsToXrp(payment.value)}</Code>
+                        </Td>
+                        <Td>
+                          {paymentsTable.label == "Incoming" ? (
+                            <Button
+                              isLoading={isLoadingClaim}
+                              size="xs"
+                              onClick={() =>
+                                submitPaymentClaim(
+                                  payment.from,
+                                  payment.to,
+                                  payment.offerSequence,
+                                  payment.condition,
+                                  payment.fulfillment
+                                )
+                              }
+                            >
+                              Claim
+                            </Button>
+                          ) : (
+                            <Button
+                              isLoading={isLoadingCancel}
+                              size="xs"
+                              onClick={() =>
+                                submitPaymentCancel(payment.offerSequence)
+                              }
+                            >
+                              Cancel
+                            </Button>
+                          )}
                         </Td>
                       </Tr>
                     );
@@ -114,6 +175,7 @@ export const UserPayments = ({
                 <Tr>
                   <Th>From</Th>
                   <Th>Amount</Th>
+                  <Th>Actions</Th>
                 </Tr>
               </Tfoot>
             </Table>

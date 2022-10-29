@@ -8,10 +8,15 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { Credential } from "@nodecfdi/credentials";
-import { Client, Wallet } from "xrpl";
+import { getCookie } from "cookies-next";
+import { useEffect, useState } from "react";
+import { Client, EscrowFinish, Wallet } from "xrpl";
 import { ONBOARDING_FLOW } from "../../constants/onboarding";
+import { XRPL_SUCCESSFUL_TES_CODE } from "../../constants/xrpl";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { buildEscrowCancel, buildEscrowFinish, includeConditions, isTransactionMetadata } from "../../lib/xrpl";
 import { Account, BankStorage } from "../../types/BankStorage";
+import { XRPLFaucetBank } from "../../types/XRPLFaucetResponse";
 import { UserAccount } from "./UserAccount";
 import { UserPay } from "./UserPay";
 import { UserPayments } from "./UserPayments";
@@ -31,7 +36,50 @@ export const UserActions = ({
   SignUp: JSX.Element;
 }) => {
   const [bank] = useLocalStorage(`bank`, {});
+  const [bankAddress, setBankAddress] = useState<string>("");
   const account: Account = (bank as BankStorage)[wallet?.address];
+
+  const cancelPayment = async (offerSequence: number) => {
+    const prepared = await xrplClient.autofill(
+      buildEscrowCancel(
+        wallet.address,
+        offerSequence,
+      )
+    );
+    const signed = wallet.sign(prepared);
+    const tx = await xrplClient.submitAndWait(signed.tx_blob);
+    if (isTransactionMetadata(tx.result.meta)) {
+      tx.result.meta.TransactionResult == XRPL_SUCCESSFUL_TES_CODE;
+      console.log("Successfully cancelled.")
+    }
+  };
+
+  const claimPayment = async (from: string, offerSequence: number, condition: string, fulfillment: string) => {
+    console.log("Started claim... (v2)", offerSequence, condition, fulfillment, from)
+    const prepared = await xrplClient.autofill(
+      includeConditions(buildEscrowFinish(
+        wallet?.address,
+        from,
+        offerSequence,
+      ), condition, fulfillment)
+    )
+    const signed = wallet.sign(prepared);
+    const tx = await xrplClient.submitAndWait(signed.tx_blob);
+    if (isTransactionMetadata(tx.result.meta)) {
+      tx.result.meta.TransactionResult == XRPL_SUCCESSFUL_TES_CODE;
+      console.log("Successfully claimed.")
+    }
+  }
+
+  useEffect(() => {
+    const uuid = `bank-${bankId}`;
+    const cachedBank = getCookie(uuid);
+    if (cachedBank) {
+      const bankAccount: XRPLFaucetBank = JSON.parse(String(cachedBank));
+      setBankAddress(bankAccount.account.address);
+    }
+  }, [bankId]);
+
   return (
     <Tabs>
       <TabList>
@@ -56,7 +104,7 @@ export const UserActions = ({
           )}
         </TabPanel>
         <TabPanel>
-          <UserPayments rfc={FIEL?.rfc()} address={wallet?.address} />
+          <UserPayments claimPayment={claimPayment} cancelPayment={cancelPayment} rfc={FIEL?.rfc()} address={wallet?.address} />
         </TabPanel>
         <TabPanel>
           <Box mb="3">
@@ -71,7 +119,7 @@ export const UserActions = ({
             <Text fontSize="sm">
               Send anybody with an RFC 0.05 to their balance.
             </Text>
-            <UserPay bankId={bankId} xrplClient={xrplClient} wallet={wallet} />
+            <UserPay bankAddress={bankAddress} xrplClient={xrplClient} wallet={wallet} />
           </Box>
         </TabPanel>
       </TabPanels>

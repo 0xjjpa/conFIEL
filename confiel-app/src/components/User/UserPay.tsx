@@ -29,18 +29,17 @@ import {
 import { XRPLFaucetBank } from "../../types/XRPLFaucetResponse";
 
 export const UserPay = ({
-  bankId,
+  bankAddress,
   xrplClient,
   wallet,
 }: {
-  bankId: string;
+  bankAddress: string;
   xrplClient: Client;
   wallet: Wallet;
 }) => {
   const [addressToTransfer, setAddressToTransfer] = useState("");
   const [transferTx, setTransferTx] = useState("");
   const [escrowFulfillment, setEscrowFulfillment] = useState<string>();
-  const [bankAddress, setBankAddress] = useState<string>("");
   const [isSuccessful, setSuccessful] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [transactions, setTransactions] = useLocalStorage(`transactions`, {});
@@ -48,6 +47,7 @@ export const UserPay = ({
   const handleChangeAddress = (e) => setAddressToTransfer(e.target.value);
 
   const escrowXRP = async () => {
+    if (bankAddress.length == 0) throw new Error("No bank to escrow");
     setLoading(true);
     console.log(
       `👤 User Module Found - Started escrow from ${wallet.address} to ${addressToTransfer} via ${bankAddress}`
@@ -77,7 +77,8 @@ export const UserPay = ({
             wallet.address,
             bankAddress,
             `${DEFAULT_FUNDING_AMOUNT / 100}`,
-            CLOSE_TIME + FIVE_MINUTES
+            CLOSE_TIME + FIVE_MINUTES,
+            CLOSE_TIME + (FIVE_MINUTES/5)
           ),
           condition
         ),
@@ -85,6 +86,7 @@ export const UserPay = ({
       )
     );
 
+    console.log("Prepared tx", prepared);
     const signed = wallet.sign(prepared);
     const tx = await xrplClient.submitAndWait(signed.tx_blob);
     console.log(`👤 User Module Found - Completed escrow`, tx);
@@ -97,13 +99,15 @@ export const UserPay = ({
         to: bankAddress,
         value: `${DEFAULT_FUNDING_AMOUNT / 100}`,
         offerSequence: tx.result.Sequence,
-        rfc: addressToTransfer
+        rfc: addressToTransfer,
+        condition,
+        fulfillment
       }
       const newEscrow: Escrow = {
         destinationTag,
         payment: newPayment
       }
-      setEscrows(Object.assign({}, escrows, { [fulfillment]: newEscrow }));
+      setEscrows(Object.assign({}, escrows, { [tx.result.hash]: newEscrow }));
     }
     const transactionId = `${wallet.address}-${bankAddress}`;
     const existingTransactions: Transaction[] =
@@ -123,15 +127,6 @@ export const UserPay = ({
     setTransferTx(tx.result.hash);
     setLoading(false);
   };
-
-  useEffect(() => {
-    const uuid = `bank-${bankId}`;
-    const cachedBank = getCookie(uuid);
-    if (cachedBank) {
-      const bankAccount: XRPLFaucetBank = JSON.parse(String(cachedBank));
-      setBankAddress(bankAccount.account.address);
-    }
-  }, [bankId]);
 
   return (
     <>

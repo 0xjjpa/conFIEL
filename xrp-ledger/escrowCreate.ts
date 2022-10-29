@@ -1,6 +1,6 @@
 import { Client, Wallet, Payment, dropsToXrp, getBalanceChanges, TransactionMetadata, EscrowCreate } from 'xrpl'
 import 'dotenv/config'
-import { randomBytes } from 'crypto'
+import { getRandomValues, randomBytes } from 'crypto'
 const cc = require('five-bells-condition')
 
 async function main() {
@@ -15,12 +15,14 @@ async function main() {
   const fulfillment_hex = fulfillment.serializeBinary().toString('hex').toUpperCase()
   console.log('Fulfillment:', fulfillment_hex)
 
-  const buildEscrowCreate = (fromAccount: string, toAccount: string, amount = "1000", cancelAfter: number): EscrowCreate => ({
+  const buildEscrowCreate = (fromAccount: string, toAccount: string, amount = "1000", cancelAfter: number, finishAfter: number): EscrowCreate => ({
     "TransactionType": "EscrowCreate",
     "Account": fromAccount,
     "Amount": amount,
     "Destination": toAccount,
     "CancelAfter": cancelAfter,
+    "FinishAfter": finishAfter,
+    "DestinationTag": 2068455639
   })
 
   const includeCondition = (escrowTransaction: EscrowCreate, condition: string): EscrowCreate => {
@@ -59,28 +61,43 @@ async function main() {
   }
   const aliceWallet = Wallet.fromSeed(aliceSeed);
 
+  const bobSeed = process.env.XRP_SECRET_BOB;
+  if (!bobSeed) {
+    console.error("No seed for Bob");
+    return;
+  }
+  const bobWallet = Wallet.fromSeed(bobSeed);
+
   const aliceResponse = await client.request({
     "command": "account_info",
     "account": aliceWallet.address,
     "ledger_index": "validated"
   })
-  console.log('Alice Balance', dropsToXrp(aliceResponse.result.account_data.Balance));
+  console.log('Alice', aliceWallet.address, dropsToXrp(aliceResponse.result.account_data.Balance));
+
+  const bobResponse = await client.request({
+    "command": "account_info",
+    "account": bobWallet.address,
+    "ledger_index": "validated"
+  })
+  console.log('Bob', bobWallet.address, dropsToXrp(bobResponse.result.account_data.Balance));
 
 
   const DEFAULT_AMOUNT = 10000000
   const prepared = await client.autofill(
     includeCondition(buildEscrowCreate(
       aliceWallet.address,
-      aliceWallet.address,
+      bobWallet.address,
       `${DEFAULT_AMOUNT}`,
       CLOSE_TIME + FIVE_MINUTES,
+      CLOSE_TIME + (FIVE_MINUTES/5),
     ), condition)
   )
 
   console.log("Prepared", prepared);
   if (prepared.Condition) {
     const max_ledger = prepared.LastLedgerSequence
-    console.log("Prepared transaction instructions:", prepared)
+    console.log("[ Create ] Prepared transaction instructions:", prepared)
     prepared.Fee && console.log("Transaction cost:", dropsToXrp(prepared.Fee), "XRP")
     console.log("Transaction expires after ledger:", max_ledger)
 
@@ -90,6 +107,12 @@ async function main() {
 
     // Submit signed blob --------------------------------------------------------
     const tx = await client.submitAndWait(signed.tx_blob)
+
+    console.log("Sequence", tx.result.Sequence);
+    console.log("Condition", condition);
+    console.log("Fulfillment", fulfillment_hex);
+    console.log("Account", aliceWallet.address);
+    console.log("Destination", bobWallet.address);
 
     // Check transaction results -------------------------------------------------
     console.log("Transaction result:", tx)

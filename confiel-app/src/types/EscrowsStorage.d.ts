@@ -6,7 +6,9 @@ export type Payment = {
   value: string,
   to: string,
   rfc: string,
-  offerSequence: number
+  offerSequence: number,
+  condition: string,
+  fulfillment: string,
 }
 
 export type Escrow = {
@@ -15,5 +17,5 @@ export type Escrow = {
 }
 
 export type EscrowStorage = {
-  [key: condition]: Escrow
+  [key: txHash]: Escrow
 }

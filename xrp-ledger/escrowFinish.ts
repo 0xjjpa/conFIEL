@@ -13,10 +13,10 @@ async function main() {
     "FinishAfter": finishAfter,
   })
 
-  const buildEscrowFinish = (fromAccount: string, toAccount: string, offerSequence: number): EscrowFinish => ({
-    "Account": fromAccount,
+  const buildEscrowFinish = (account: string, owner: string, offerSequence: number): EscrowFinish => ({
+    "Account": account,
     "TransactionType": "EscrowFinish",
-    "Owner": toAccount,
+    "Owner": owner,
     "OfferSequence": offerSequence,
   })
 
@@ -57,27 +57,41 @@ async function main() {
   }
   const aliceWallet = Wallet.fromSeed(aliceSeed);
 
+  const bobSeed = process.env.XRP_SECRET_BOB;
+  if (!bobSeed) {
+    console.error("No seed for Bob");
+    return;
+  }
+  const bobWallet = Wallet.fromSeed(bobSeed);
+
   const aliceResponse = await client.request({
     "command": "account_info",
     "account": aliceWallet.address,
     "ledger_index": "validated"
   })
-  console.log('Alice Balance', dropsToXrp(aliceResponse.result.account_data.Balance));
+  console.log('Alice', aliceWallet.address, dropsToXrp(aliceResponse.result.account_data.Balance));
+
+  const bobResponse = await client.request({
+    "command": "account_info",
+    "account": bobWallet.address,
+    "ledger_index": "validated"
+  })
+  console.log('Bob', bobWallet.address, dropsToXrp(bobResponse.result.account_data.Balance));
 
   const prepared = await client.autofill(
     includeConditions(buildEscrowFinish(
-      aliceWallet.address,
-      aliceWallet.address,
-      30279954,
-    ), "A0258020E32F7C32F035AC62E167B2A6A0DB6A8F9AADE08B8C4BCD57E8045230559778AD810120", "A0228020FAA7E4115056EAA6CEE505E40B96FCDED702E70EDB7F4DE2559852DD8F499C06")
+      bobWallet.address,
+      "rnAcJLjZq648DgZ9YmD9XLe8ZLzH6cjvFw",
+      32395118,
+    ), "A0258020BD6E6938532E62F27118D46E998A7D3E2D7D5BB4ABDD81F28A6EE86846FD6754810120", "A0228020FFD04E72172FA91216AAFC4CED41E3995E3C39CD8094B0A3EB4CCD6EC828C3E5")
   )
 
   const max_ledger = prepared.LastLedgerSequence
-  console.log("Prepared transaction instructions:", prepared)
+  console.log("[ Finish ] Prepared transaction instructions:", prepared)
   prepared.Fee && console.log("Transaction cost:", dropsToXrp(prepared.Fee), "XRP")
   console.log("Transaction expires after ledger:", max_ledger)
 
-  const signed = aliceWallet.sign(prepared)
+  const signed = bobWallet.sign(prepared)
   console.log("Identifying hash:", signed.hash)
   console.log("Signed blob:", signed.tx_blob)
 
