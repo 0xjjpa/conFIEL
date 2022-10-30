@@ -188,7 +188,7 @@ export const BankView = ({
                           isLoading={isLoading}
                           onClick={() => fundAccount(account.address)}
                         >
-                          Approve
+                          Approve (Fund 15 XRP)
                         </Button>
                       )}
                       {account.status == ONBOARDING_FLOW.account_approved && (

@@ -67,7 +67,7 @@ export const UserActions = ({
     const tx = await xrplClient.submitAndWait(signed.tx_blob);
     if (isTransactionMetadata(tx.result.meta)) {
       tx.result.meta.TransactionResult == XRPL_SUCCESSFUL_TES_CODE;
-      console.log("Successfully claimed.")
+      return tx.result.hash;
     }
   }
 
@@ -104,7 +104,7 @@ export const UserActions = ({
           )}
         </TabPanel>
         <TabPanel>
-          <UserPayments claimPayment={claimPayment} cancelPayment={cancelPayment} rfc={FIEL?.rfc()} address={wallet?.address} />
+          <UserPayments isApproved={account?.status == ONBOARDING_FLOW.account_approved} claimPayment={claimPayment} cancelPayment={cancelPayment} rfc={FIEL?.rfc()} address={wallet?.address} />
         </TabPanel>
         <TabPanel>
           <Box mb="3">

@@ -23,19 +23,22 @@ import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { truncate, titleCase } from "../../lib/helpers";
 import { Escrow, EscrowStorage, Payment } from "../../types/EscrowsStorage";
 import { BankCopyIcon } from "../Bank/BankCopyIcon";
+import { ClaimButton } from "../ClaimButton";
 
 export const UserPayments = ({
   claimPayment,
   cancelPayment,
   rfc,
   address,
+  isApproved
 }: {
   claimPayment: (
     from: string,
     offerSequence: number,
     condition: string,
-    fulfillment: string
-  ) => void;
+    fulfillment: string,
+  ) => string | void;
+  isApproved: boolean,
   cancelPayment: (offerSequence: number) => void;
   rfc: string;
   address?: string;
@@ -63,11 +66,13 @@ export const UserPayments = ({
   ) => {
     console.log("Loading Claim...");
     setLoadingClaim(true);
-    await claimPayment(from, offerSequence, condition, fulfillmet);
+    const maybeHash = await claimPayment(from, offerSequence, condition, fulfillmet);
     setLoadingClaim(false);
+    return maybeHash;
   };
 
   useEffect(() => {
+    console.log('Loading payments...')
     const { incomingPayments, outgoingPayments } = Object.keys(
       escrows as EscrowStorage
     ).reduce(
@@ -135,21 +140,15 @@ export const UserPayments = ({
                         </Td>
                         <Td>
                           {paymentsTable.label == "Incoming" ? (
-                            <Button
-                              isLoading={isLoadingClaim}
-                              size="xs"
-                              onClick={() =>
-                                submitPaymentClaim(
+                            isApproved && <ClaimButton isLoadingClaim={isLoadingClaim} submitPaymentClaim={() => {
+                                return submitPaymentClaim(
                                   payment.from,
                                   payment.to,
                                   payment.offerSequence,
                                   payment.condition,
                                   payment.fulfillment
-                                )
-                              }
-                            >
-                              Claim
-                            </Button>
+                                )}
+                              }/>
                           ) : (
                             <Button
                               isLoading={isLoadingCancel}

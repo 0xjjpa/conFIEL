@@ -147,7 +147,7 @@ export const UserAccount = ({
       </Flex>
       {account?.status === ONBOARDING_FLOW.open_account && (
         <Button mt="2" onClick={moveNextStage}>
-          Open Account (15 XRP)
+          Open Account
         </Button>
       )}
       {account?.status === ONBOARDING_FLOW.open_account_requested && (
