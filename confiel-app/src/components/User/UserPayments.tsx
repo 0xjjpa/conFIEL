@@ -37,13 +37,13 @@ export const UserPayments = ({
     offerSequence: number,
     condition: string,
     fulfillment: string,
-  ) => string | void;
+  ) => Promise<string | void>;
   isApproved: boolean,
   cancelPayment: (offerSequence: number) => void;
   rfc: string;
   address?: string;
 }) => {
-  const [escrows] = useLocalStorage(`escrows`, {});
+  const [escrows, setEscrows] = useLocalStorage(`escrows`, {});
   const [incomingPayments, setIncomingPayments] = useState<Payment[]>();
   const [outgoingPayments, setOutgoingPayments] = useState<Payment[]>();
   const [isLargerThan1280] = useMediaQuery("(min-width: 480px)");
@@ -56,6 +56,17 @@ export const UserPayments = ({
     await cancelPayment(offerSequence);
     setLoadingCancel(false);
   };
+
+  const updateEscrowAsClaimed = (id: string, claimedTxHash: string) => {
+    const escrow: Escrow = (escrows as EscrowStorage)[id] || {};
+    const payment = escrow?.payment;
+    const updatedPayment: Payment = Object.assign({}, payment, { claimedTx: claimedTxHash });
+    const newEscrow: Escrow = {
+      destinationTag: escrow?.destinationTag,
+      payment: updatedPayment
+    }
+    setEscrows(Object.assign({}, escrows, { [id]: newEscrow }));
+  }
 
   const submitPaymentClaim = async (
     from: string,
@@ -140,7 +151,7 @@ export const UserPayments = ({
                         </Td>
                         <Td>
                           {paymentsTable.label == "Incoming" ? (
-                            isApproved && <ClaimButton isLoadingClaim={isLoadingClaim} submitPaymentClaim={() => {
+                            isApproved && <ClaimButton claimedHash={payment.claimedTx} claimedCallback={(claimedTxHash) => updateEscrowAsClaimed(payment.id, claimedTxHash)} isLoadingClaim={isLoadingClaim} submitPaymentClaim={() => {
                                 return submitPaymentClaim(
                                   payment.from,
                                   payment.to,

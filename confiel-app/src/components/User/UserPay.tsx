@@ -78,7 +78,7 @@ export const UserPay = ({
             bankAddress,
             `${DEFAULT_FUNDING_AMOUNT / 100}`,
             CLOSE_TIME + FIVE_MINUTES,
-            CLOSE_TIME + (FIVE_MINUTES/5)
+            CLOSE_TIME + (FIVE_MINUTES/(5*60))
           ),
           condition
         ),

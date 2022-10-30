@@ -9,6 +9,7 @@ export type Payment = {
   offerSequence: number,
   condition: string,
   fulfillment: string,
+  claimedTx?: string,
 }
 
 export type Escrow = {

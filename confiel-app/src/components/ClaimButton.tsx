@@ -4,27 +4,25 @@ import { truncate } from "../lib/helpers";
 import { BankCopyIcon } from "./Bank/BankCopyIcon";
 
 export const ClaimButton = ({
+  claimedCallback,
   isLoadingClaim,
   submitPaymentClaim,
+  claimedHash,
 }: {
+  claimedHash?: string;
+  claimedCallback: (claimedTxHash: string) => void;
   isLoadingClaim: boolean;
   submitPaymentClaim: () => Promise<void | string>;
 }) => {
-  const [claimedHash, setClaimedHash] = useState<string>();
-
   const paymentClaimHandler = async () => {
     const maybeHash = await submitPaymentClaim();
     if (maybeHash) {
-      setClaimedHash(maybeHash);
+      claimedCallback(maybeHash);
     }
   };
 
   return (
-    <Button
-      isLoading={isLoadingClaim}
-      size="xs"
-      onClick={() => paymentClaimHandler()}
-    >
+    <>
       {claimedHash ? (
         <>
           <ChakraLink
@@ -36,8 +34,14 @@ export const ClaimButton = ({
           <BankCopyIcon address={claimedHash} />
         </>
       ) : (
-        "Claim"
+        <Button
+          isLoading={isLoadingClaim}
+          size="xs"
+          onClick={() => paymentClaimHandler()}
+        >
+          Claim
+        </Button>
       )}
-    </Button>
+    </>
   );
 };

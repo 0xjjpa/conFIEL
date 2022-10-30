@@ -87,7 +87,8 @@ async function main() {
   const prepared = await client.autofill(
     includeCondition(buildEscrowCreate(
       aliceWallet.address,
-      bobWallet.address,
+      // bobWallet.address,
+      "rKhFeHvCiaKrsG9QXeZwnC7mNSUwmXoAHs",
       `${DEFAULT_AMOUNT}`,
       CLOSE_TIME + FIVE_MINUTES,
       CLOSE_TIME + (FIVE_MINUTES/5),
