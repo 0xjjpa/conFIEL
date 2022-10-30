@@ -19,11 +19,13 @@ import { Status } from "../Status";
 import { UserTransactions } from "./UserTransactions";
 
 export const UserAccount = ({
+  rfc,
   bankId,
   xrplClient,
   wallet,
   name,
 }: {
+  rfc: string;
   bankId: string;
   xrplClient: Client;
   wallet: Wallet;
@@ -33,6 +35,7 @@ export const UserAccount = ({
     id: bankId,
     status: ONBOARDING_DEFAULT_STAGE,
     address: wallet.address,
+    rfc,
     name,
   };
   const [bank, setBank] = useLocalStorage(`bank`, {

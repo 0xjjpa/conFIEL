@@ -12,7 +12,7 @@ export default async function handler(
   res: NextApiResponse<BankResponse>
 ) {
 
-  const { method, body: { privateKey, bankAddress, address } } = req;
+  const { method, body: { privateKey, bankAddress, address, amount } } = req;
 
   if (method != 'POST') return res.status(405).json({ status: 'err', err: 'Only GET method allowed' })
   if (!privateKey) return res.status(501).json({ status: 'err', err: 'No private key given' })
@@ -25,7 +25,7 @@ export default async function handler(
     buildTransaction(
       bankAddress,
       `${address}`,
-      `${RESERVE_FUNDING_AMOUNT + DEFAULT_FUNDING_AMOUNT}`
+      amount ? amount : `${RESERVE_FUNDING_AMOUNT + DEFAULT_FUNDING_AMOUNT}`
     )
   )
   const bankWallet = Wallet.fromSeed(privateKey);

@@ -11,6 +11,7 @@ import { Credential } from "@nodecfdi/credentials";
 import { getCookie } from "cookies-next";
 import { useEffect, useState } from "react";
 import { Client, EscrowFinish, Wallet } from "xrpl";
+import { DEFAULT_FUNDING_AMOUNT } from "../../constants/bank";
 import { ONBOARDING_FLOW } from "../../constants/onboarding";
 import { TRANSACTIONS_TYPE } from "../../constants/transactions";
 import { XRPL_SUCCESSFUL_TES_CODE } from "../../constants/xrpl";
@@ -21,6 +22,7 @@ import {
   includeConditions,
   isTransactionMetadata,
 } from "../../lib/xrpl";
+import { BankResponse } from "../../types/BankResponse";
 import { Account, BankStorage } from "../../types/BankStorage";
 import {
   Transaction,
@@ -48,6 +50,7 @@ export const UserActions = ({
   const [bank] = useLocalStorage(`bank`, {});
   const [transactions, setTransactions] = useLocalStorage(`transactions`, {});
   const [bankAddress, setBankAddress] = useState<string>("");
+  const [bankAccount, setBankAccount] = useState<XRPLFaucetBank>();
   const account: Account = (bank as BankStorage)[wallet?.address];
 
   const cancelPayment = async (offerSequence: number) => {
@@ -62,8 +65,50 @@ export const UserActions = ({
     }
   };
 
+  const forwardPayment = async (rfc: string) => {
+    const accounts = bank ? Object.keys(bank) : [];
+    const fowardeeAccountAddress = accounts.find(
+      (accountKey) => (bank[accountKey] as Account).rfc == rfc
+    );
+    const response: BankResponse = await (
+      await fetch("/api/bank/fund", {
+        method: "POST",
+        body: JSON.stringify({
+          amount: `${DEFAULT_FUNDING_AMOUNT / 100}`,
+          address: fowardeeAccountAddress,
+          privateKey: bankAccount.account.secret,
+          bankAddress: bankAccount.account.address,
+        }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+    ).json();
+    const { status } = response;
+    if (status == "ok") {
+      const transactionId = `${bankAccount.account.address}-${fowardeeAccountAddress}`;
+      const existingTransactions: Transaction[] =
+        (transactions as TransactionsStorage)[transactionId] || [];
+      const newTransaction: Transaction = {
+        from: bankAccount.account.address,
+        to: fowardeeAccountAddress,
+        hash: response.txHash,
+        type: TRANSACTIONS_TYPE.forwarded,
+      };
+      existingTransactions.push(newTransaction);
+      setTransactions(
+        Object.assign({}, transactions, {
+          [transactionId]: existingTransactions,
+        })
+      );
+    }
+    return response;
+  }
+
   const claimPayment = async (
     from: string,
+    to: string,
     offerSequence: number,
     condition: string,
     fulfillment: string
@@ -84,7 +129,8 @@ export const UserActions = ({
     );
     const signed = wallet.sign(prepared);
     const tx = await xrplClient.submitAndWait(signed.tx_blob);
-    if (isTransactionMetadata(tx.result.meta) && tx.result.meta.TransactionResult == XRPL_SUCCESSFUL_TES_CODE) {
+    await forwardPayment(to);
+    if (isTransactionMetadata(tx.result.meta) && tx.result.meta.TransactionResult == XRPL_SUCCESSFUL_TES_CODE) {  
       const transactionId = `${wallet.address}-${from}`;
       const existingTransactions: Transaction[] =
         (transactions as TransactionsStorage)[transactionId] || [];
@@ -109,6 +155,7 @@ export const UserActions = ({
     const cachedBank = getCookie(uuid);
     if (cachedBank) {
       const bankAccount: XRPLFaucetBank = JSON.parse(String(cachedBank));
+      setBankAccount(bankAccount);
       setBankAddress(bankAccount.account.address);
     }
   }, [bankId]);
@@ -129,6 +176,7 @@ export const UserActions = ({
         <TabPanel>
           {wallet && FIEL && (
             <UserAccount
+              rfc={FIEL?.rfc()}
               bankId={bankId}
               xrplClient={xrplClient}
               wallet={wallet}

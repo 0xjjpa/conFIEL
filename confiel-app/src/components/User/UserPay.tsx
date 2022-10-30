@@ -78,7 +78,7 @@ export const UserPay = ({
             bankAddress,
             `${DEFAULT_FUNDING_AMOUNT / 100}`,
             CLOSE_TIME + FIVE_MINUTES,
-            CLOSE_TIME + (FIVE_MINUTES/(5*60))
+            CLOSE_TIME + (FIVE_MINUTES/(5*1))
           ),
           condition
         ),
@@ -90,8 +90,7 @@ export const UserPay = ({
     const signed = wallet.sign(prepared);
     const tx = await xrplClient.submitAndWait(signed.tx_blob);
     console.log(`👤 User Module Found - Completed escrow`, tx);
-    if (isTransactionMetadata(tx.result.meta)) {
-      tx.result.meta.TransactionResult == XRPL_SUCCESSFUL_TES_CODE;
+    if (isTransactionMetadata(tx.result.meta) && tx.result.meta.TransactionResult == XRPL_SUCCESSFUL_TES_CODE) {
       setSuccessful(true);
       const newPayment: Payment = {
         id: tx.result.hash,

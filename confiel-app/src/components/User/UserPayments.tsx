@@ -34,6 +34,7 @@ export const UserPayments = ({
 }: {
   claimPayment: (
     from: string,
+    to: string,
     offerSequence: number,
     condition: string,
     fulfillment: string,
@@ -75,9 +76,9 @@ export const UserPayments = ({
     condition: string,
     fulfillmet: string
   ) => {
-    console.log("Loading Claim...");
+    console.log("Loading Claim...", from, to);
     setLoadingClaim(true);
-    const maybeHash = await claimPayment(from, offerSequence, condition, fulfillmet);
+    const maybeHash = await claimPayment(from, to, offerSequence, condition, fulfillmet);
     setLoadingClaim(false);
     return maybeHash;
   };
@@ -154,7 +155,7 @@ export const UserPayments = ({
                             isApproved && <ClaimButton claimedHash={payment.claimedTx} claimedCallback={(claimedTxHash) => updateEscrowAsClaimed(payment.id, claimedTxHash)} isLoadingClaim={isLoadingClaim} submitPaymentClaim={() => {
                                 return submitPaymentClaim(
                                   payment.from,
-                                  payment.to,
+                                  payment.rfc,
                                   payment.offerSequence,
                                   payment.condition,
                                   payment.fulfillment
