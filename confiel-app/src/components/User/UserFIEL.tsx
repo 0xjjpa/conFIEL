@@ -1,6 +1,6 @@
 import { ArrowUpIcon } from "@chakra-ui/icons";
-import { Credential } from "@nodecfdi/credentials";
-import { KEYUTIL, RSAKey } from 'jsrsasign';
+import { Credential, SignatureAlgorithm } from "@nodecfdi/credentials";
+import { KEYUTIL, RSAKey, hex2b64 } from 'jsrsasign';
 
 import {
   Flex,
@@ -128,11 +128,15 @@ export const FIELSetup = ({
       password
     );
 
-    const decryptedPEM = KEYUTIL.getPEM(KEYUTIL.getKeyFromEncryptedPKCS8PEM(fiel.privateKey().pem(), fiel.privateKey().passPhrase()), "PKCS8PRV");
+    const rsaKey: RSAKey = KEYUTIL.getKeyFromEncryptedPKCS8PEM(fiel.privateKey().pem(), fiel.privateKey().passPhrase())
+    const decryptedPEM = KEYUTIL.getPEM(rsaKey, "PKCS8PRV");
     console.log("🔑 Decrypted Key (PEM)", decryptedPEM);
     const cryptoKey = await importPrivateKey(decryptedPEM);
     console.log("🔑 Crypto Key (Web API)", cryptoKey);
 
+    const co = "ZDQ2YjM1MDItNTQwZS00NzVmLWFkNzMtZjY3NjY1MDU1NTM0|PEAJ891121U75|00001000000515837227";
+    const lf = "UFRMWkluTGNRRHZiR0syYitGSmhGS3NGaHppNW5RL3VvbzgzK1ZLRnkyTlozZ3BjMkZUdFY3UXcvczh0Uk1ZNm9EbHd5SGZQU2s5WmxxNFRZLzlqTGc0YW5IMGVCZXV1S2NZR1pRT1hSZFRNRStqa2p2ZUVXeEJHZ25jRWdqNDc5djBoOWFPUEUzWFNTajA2eVFJaXpvY2ZwSWNQUUpzREVPY09xdVVsZXZPY1AvRWpVYlQwYmcxdlYwUnpVK0JtY3JsbzUvMGZHeDYrcHYrNUdVdi9xT0l4aldDQUpNS09QTDNHaVJYOFdvb1Rlc0pwdFppWDNFeEZoSmJ4blFYL2xENE9sWnBBOCtpNUlLZis4NGZOSS9TSFJEcG8vOGlEbHNtN1pLMSs4bGNCTGFCTkVRbC9sRWIzdzJQcnZ0c2xUbWlIWnRUS0tMeXROQkpYYjVYL1lBPT0="
+    const tok = "V2tSUk1sbHFUVEZOUkVsMFRsUlJkMXBUTURCT2VsWnRURmRHYTA1NlRYUmFhbGt6VG1wWk1VMUVWVEZPVkUwd2ZGQkZRVW80T1RFeE1qRlZOelY4TURBd01ERXdNREF3TURBMU1UVTRNemN5TWpjPSNVRlJNV2tsdVRHTlJSSFppUjBzeVlpdEdTbWhHUzNOR2FIcHBOVzVSTDNWdmJ6Z3pLMVpMUm5reVRsb3paM0JqTWtaVWRGWTNVWGN2Y3poMFVrMVpObTlFYkhkNVNHWlFVMnM1V214eE5GUlpMemxxVEdjMFlXNUlNR1ZDWlhWMVMyTlpSMXBSVDFoU1pGUk5SU3RxYTJwMlpVVlhlRUpIWjI1alJXZHFORGM1ZGpCb09XRlBVRVV6V0ZOVGFqQTJlVkZKYVhwdlkyWndTV05RVVVwelJFVlBZMDl4ZFZWc1pYWlBZMUF2UldwVllsUXdZbWN4ZGxZd1VucFZLMEp0WTNKc2J6VXZNR1pIZURZcmNIWXJOVWRWZGk5eFQwbDRhbGREUVVwTlMwOVFURE5IYVZKWU9GZHZiMVJsYzBwd2RGcHBXRE5GZUVab1NtSjRibEZZTDJ4RU5FOXNXbkJCT0N0cE5VbExaaXM0TkdaT1NTOVRTRkpFY0c4dk9HbEViSE50TjFwTE1TczRiR05DVEdGQ1RrVlJiQzlzUldJemR6SlFjblowYzJ4VWJXbElXblJVUzB0TWVYUk9Ra3BZWWpWWUwxbEJQVDA9"
     const MESSAGE_TO_SIGN = 'Hi there';
 
     const encoded = new TextEncoder().encode(MESSAGE_TO_SIGN);
@@ -142,10 +146,31 @@ export const FIELSetup = ({
       encoded
     );
     const signatureAsHex = bufferToHex(signature);
-    console.log("🧾 Signature", signatureAsHex);
+    console.log("🧾 Signature (Web Crypto API)", signatureAsHex);
+
+    // const digestAsHex = RSAKey.signString(co, 'sha1')
+    // const digestAsB64 = hex2b64(digestAsHex)
+    // const LF = Base64.encode(digestAsB64)
+    // const token = Base64.encode(Base64.encode(co) + "#" + LF);
+
+    const digestAsHex = fiel.sign(co, SignatureAlgorithm.SHA1)
+    console.log("🧾 SHA1(co) as Hex (from Fiel)", digestAsHex);
+    const digestAsB64 = hex2b64(digestAsHex)
+    console.log("🧾 SHA1(co) as B64 (from Fiel)", digestAsB64);
+    const LF = btoa(digestAsB64)
+
+    console.log("🔑 Generated LF", LF);
+    console.log("🔑 Obtained LF", lf);
+    
 
     const signatureFromFIEL = fiel.sign(MESSAGE_TO_SIGN);
     console.log("🧾 Signature (From FIEL)", signatureFromFIEL);
+
+    const signatureFromFIELAsBase64 = btoa(signatureFromFIEL);
+    console.log("🧾 Signature (From FIEL, base64)", signatureFromFIELAsBase64);
+
+    console.log("🧾 Signature (From SAT, base64)", lf);
+    console.log("🧾 Token/Signature (From SAT)", tok);
 
     const eFirma = fiel.certificate();
     setFIEL(fiel);
