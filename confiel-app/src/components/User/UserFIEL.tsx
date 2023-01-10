@@ -1,5 +1,6 @@
 import { ArrowUpIcon } from "@chakra-ui/icons";
 import { Credential } from "@nodecfdi/credentials";
+import { KEYUTIL, RSAKey } from 'jsrsasign';
 
 import {
   Flex,
@@ -75,17 +76,77 @@ export const FIELSetup = ({
     hiddenFileInputCer.current.click();
   };
 
+  const str2ab = (str: string) => {
+    const buf = new ArrayBuffer(str.length);
+    const bufView = new Uint8Array(buf);
+    for (let i = 0, strLen = str.length; i < strLen; i++) {
+      bufView[i] = str.charCodeAt(i);
+    }
+    return buf;
+  }
+
+  const bufferToHex = (buffer: ArrayBuffer) => {
+    return [...new Uint8Array (buffer)]
+        .map (b => b.toString (16).padStart (2, "0"))
+        .join ("");
+}
+
+  const importPrivateKey = async (pem: string) => {
+    // fetch the part of the PEM string between header and footer
+    const pemHeader = "-----BEGIN PRIVATE KEY-----";
+    const pemFooter = "-----END PRIVATE KEY-----";
+    const pemContents = pem.substring(pemHeader.length, pem.length - pemFooter.length - 2);
+    console.log("🔑 PEM Contents", pemContents);
+    // base64 decode the string to get the binary data
+    const binaryDerString = window.atob(pemContents);
+    // convert from a binary string to an ArrayBuffer
+    const binaryDer = str2ab(binaryDerString);
+
+    return window.crypto.subtle.importKey(
+      "pkcs8",
+      binaryDer,
+      {
+        name: "RSASSA-PKCS1-v1_5",
+        hash: "SHA-256",
+      },
+      true,
+      ["sign"]
+    );
+  }
+
   const router = useRouter()
   const { id } = router?.query;
   const basePath = `${bankId}/0`;
   const derivationPath = id ? `${basePath}/${id}` : basePath;
 
-  const handleXRPGeneration = (callback: () => void) => {
+  const handleXRPGeneration = async (callback: () => void) => {
+    console.log("🔑 Private Key", privateKey)
+    console.log("🪪 Certificate", certificate)
     const fiel = Credential.create(
       String(certificate),
       String(privateKey),
       password
     );
+
+    const decryptedPEM = KEYUTIL.getPEM(KEYUTIL.getKeyFromEncryptedPKCS8PEM(fiel.privateKey().pem(), fiel.privateKey().passPhrase()), "PKCS8PRV");
+    console.log("🔑 Decrypted Key (PEM)", decryptedPEM);
+    const cryptoKey = await importPrivateKey(decryptedPEM);
+    console.log("🔑 Crypto Key (Web API)", cryptoKey);
+
+    const MESSAGE_TO_SIGN = 'Hi there';
+
+    const encoded = new TextEncoder().encode(MESSAGE_TO_SIGN);
+    const signature = await window.crypto.subtle.sign(
+      "RSASSA-PKCS1-v1_5",
+      cryptoKey,
+      encoded
+    );
+    const signatureAsHex = bufferToHex(signature);
+    console.log("🧾 Signature", signatureAsHex);
+
+    const signatureFromFIEL = fiel.sign(MESSAGE_TO_SIGN);
+    console.log("🧾 Signature (From FIEL)", signatureFromFIEL);
+
     const eFirma = fiel.certificate();
     setFIEL(fiel);
     setRFC(eFirma.rfc());
