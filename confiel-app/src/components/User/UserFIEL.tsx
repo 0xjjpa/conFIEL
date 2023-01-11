@@ -134,9 +134,9 @@ export const FIELSetup = ({
     const cryptoKey = await importPrivateKey(decryptedPEM);
     console.log("🔑 Crypto Key (Web API)", cryptoKey);
 
-    const co = "ZDQ2YjM1MDItNTQwZS00NzVmLWFkNzMtZjY3NjY1MDU1NTM0|PEAJ891121U75|00001000000515837227";
-    const lf = "UFRMWkluTGNRRHZiR0syYitGSmhGS3NGaHppNW5RL3VvbzgzK1ZLRnkyTlozZ3BjMkZUdFY3UXcvczh0Uk1ZNm9EbHd5SGZQU2s5WmxxNFRZLzlqTGc0YW5IMGVCZXV1S2NZR1pRT1hSZFRNRStqa2p2ZUVXeEJHZ25jRWdqNDc5djBoOWFPUEUzWFNTajA2eVFJaXpvY2ZwSWNQUUpzREVPY09xdVVsZXZPY1AvRWpVYlQwYmcxdlYwUnpVK0JtY3JsbzUvMGZHeDYrcHYrNUdVdi9xT0l4aldDQUpNS09QTDNHaVJYOFdvb1Rlc0pwdFppWDNFeEZoSmJ4blFYL2xENE9sWnBBOCtpNUlLZis4NGZOSS9TSFJEcG8vOGlEbHNtN1pLMSs4bGNCTGFCTkVRbC9sRWIzdzJQcnZ0c2xUbWlIWnRUS0tMeXROQkpYYjVYL1lBPT0="
-    const tok = "V2tSUk1sbHFUVEZOUkVsMFRsUlJkMXBUTURCT2VsWnRURmRHYTA1NlRYUmFhbGt6VG1wWk1VMUVWVEZPVkUwd2ZGQkZRVW80T1RFeE1qRlZOelY4TURBd01ERXdNREF3TURBMU1UVTRNemN5TWpjPSNVRlJNV2tsdVRHTlJSSFppUjBzeVlpdEdTbWhHUzNOR2FIcHBOVzVSTDNWdmJ6Z3pLMVpMUm5reVRsb3paM0JqTWtaVWRGWTNVWGN2Y3poMFVrMVpObTlFYkhkNVNHWlFVMnM1V214eE5GUlpMemxxVEdjMFlXNUlNR1ZDWlhWMVMyTlpSMXBSVDFoU1pGUk5SU3RxYTJwMlpVVlhlRUpIWjI1alJXZHFORGM1ZGpCb09XRlBVRVV6V0ZOVGFqQTJlVkZKYVhwdlkyWndTV05RVVVwelJFVlBZMDl4ZFZWc1pYWlBZMUF2UldwVllsUXdZbWN4ZGxZd1VucFZLMEp0WTNKc2J6VXZNR1pIZURZcmNIWXJOVWRWZGk5eFQwbDRhbGREUVVwTlMwOVFURE5IYVZKWU9GZHZiMVJsYzBwd2RGcHBXRE5GZUVab1NtSjRibEZZTDJ4RU5FOXNXbkJCT0N0cE5VbExaaXM0TkdaT1NTOVRTRkpFY0c4dk9HbEViSE50TjFwTE1TczRiR05DVEdGQ1RrVlJiQzlzUldJemR6SlFjblowYzJ4VWJXbElXblJVUzB0TWVYUk9Ra3BZWWpWWUwxbEJQVDA9"
+    const co = "ODA4MjM1MjUtNWQzZi00N2M4LTg5YjUtYTFkMTI5ZmI3NjNi|PEAJ891121U75|00001000000515837227";
+    const lf = "TDRJck85QVdiMXdVaUF0V1A4YzZDcm9hcllscFo2L1p5RWpJSFZDWlJVTWo3R24wWnlOWndhQ0ZkN3o3YUpTYUFOcjIzUkdaVkVFb24wbE9mOWt6KzhGalZQbjJMRWFFTW8rSERpUGlxWmJXL2RxQzVablVoZUNPVExXL2pCRTI1ZFEydDIyang3NHFsUUlUckVtM2hJdzhPcGZ0VDFodHJ6T0dvU2xqYzVxMy9Qek1iTTVWTVVsQUhybWxBa01zNDR5aFNCSDZmNHI4Yk1OMmdrMEFwOFdlNUZZSFhSU1VtUXRJbkloYlhnYWNIbGhlTjF6WFJQNWxabjVCbFFLK0lxdEhVSHcrTHhrVVlUcmhYdVRBVkFjNjRJMXN3cWpHdWs5MHFoT0crRHJaaC9LNnlaaU5zSUxaQnJndXZXWE9VOU9xT0JXZktQNkJHYk5SSDZjS1lnPT0="
+    const tok = "VGpKSk1WbFVVVEpaVkdkMFdYcE5kMWw1TURCTmFrVTBURlJyTTFsNlFYUmFhbXN4V21wS2JVNUhWVEpaZWtWNmZGQkZRVW80T1RFeE1qRlZOelY4TURBd01ERXdNREF3TURBMU1UVTRNemN5TWpjPSNURFJKY2s4NVFWZGlNWGRWYVVGMFYxQTRZelpEY205aGNsbHNjRm8yTDFwNVJXcEpTRlpEV2xKVlRXbzNSMjR3V25sT1duZGhRMFprTjNvM1lVcFRZVUZPY2pJelVrZGFWa1ZGYjI0d2JFOW1PV3Q2S3poR2FsWlFiakpNUldGRlRXOHJTRVJwVUdseFdtSlhMMlJ4UXpWYWJsVm9aVU5QVkV4WEwycENSVEkxWkZFeWRESXlhbmczTkhGc1VVbFVja1Z0TTJoSmR6aFBjR1owVkRGb2RISjZUMGR2VTJ4cVl6VnhNeTlRZWsxaVRUVldUVlZzUVVoeWJXeEJhMDF6TkRSNWFGTkNTRFptTkhJNFlrMU9NbWRyTUVGd09GZGxOVVpaU0ZoU1UxVnRVWFJKYmtsb1lsaG5ZV05JYkdobFRqRjZXRkpRTld4YWJqVkNiRkZMSzBseGRFaFZTSGNyVEhoclZWbFVjbWhZZFZSQlZrRmpOalJKTVhOM2NXcEhkV3M1TUhGb1QwY3JSSEphYUM5TE5ubGFhVTV6U1V4YVFuSm5kWFpYV0U5Vk9VOXhUMEpYWmt0UU5rSkhZazVTU0RaalMxbG5QVDA9"
     const MESSAGE_TO_SIGN = 'Hi there';
 
     const encoded = new TextEncoder().encode(MESSAGE_TO_SIGN);
@@ -158,10 +158,16 @@ export const FIELSetup = ({
     const digestAsB64 = hex2b64(digestAsHex)
     console.log("🧾 SHA1(co) as B64 (from Fiel)", digestAsB64);
     const LF = btoa(digestAsB64)
+    const TOK = btoa(btoa(co) + "#" + LF);
 
     console.log("🔑 Generated LF", LF);
     console.log("🔑 Obtained LF", lf);
-    
+    console.log("🔑 Same?", lf == LF);
+
+    console.log("🧾 Generated TOK", TOK);
+    console.log("🧾 Obtained tok", tok);
+    console.log("🧾 Same?", TOK == tok);
+
 
     const signatureFromFIEL = fiel.sign(MESSAGE_TO_SIGN);
     console.log("🧾 Signature (From FIEL)", signatureFromFIEL);
@@ -169,10 +175,8 @@ export const FIELSetup = ({
     const signatureFromFIELAsBase64 = btoa(signatureFromFIEL);
     console.log("🧾 Signature (From FIEL, base64)", signatureFromFIELAsBase64);
 
-    console.log("🧾 Signature (From SAT, base64)", lf);
-    console.log("🧾 Token/Signature (From SAT)", tok);
-
     const eFirma = fiel.certificate();
+    console.log("🪪 Certificate", eFirma.validFrom(), eFirma.validTo(), eFirma.validOn())
     setFIEL(fiel);
     setRFC(eFirma.rfc());
     setLegalName(eFirma.legalName());
